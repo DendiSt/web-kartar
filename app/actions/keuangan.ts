@@ -89,6 +89,43 @@ export async function createKeuangan(formData: FormData) {
   return { success: true }
 }
 
+export async function updateKeuangan(formData: FormData) {
+  const supabase = await createClient()
+  
+  const id = formData.get('id') as string
+  const tanggal = formData.get('tanggal') as string
+  const tipe = formData.get('tipe') as string
+  const kategori = formData.get('kategori') as string
+  const jumlah = parseFloat(formData.get('jumlah') as string)
+  const keterangan = formData.get('keterangan') as string
+  const bukti_url = formData.get('bukti_url') as string || null
+  
+  if (!id || !tanggal || !tipe || !kategori || !jumlah || !keterangan) {
+    return { error: 'Semua field wajib harus diisi' }
+  }
+
+  const { error } = await supabase
+    .from('keuangan')
+    .update({
+      tanggal,
+      tipe,
+      kategori,
+      jumlah,
+      keterangan,
+      bukti_url
+    })
+    .eq('id', id)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/dashboard/keuangan')
+  revalidatePath('/keuangan')
+  revalidatePath('/dashboard') // Update dashboard overview
+  return { success: true }
+}
+
 export async function deleteKeuangan(id: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('keuangan').delete().eq('id', id)

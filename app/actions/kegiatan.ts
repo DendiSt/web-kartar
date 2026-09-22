@@ -63,6 +63,40 @@ export async function createKegiatan(formData: FormData) {
   return { success: true }
 }
 
+export async function updateKegiatan(formData: FormData) {
+  const supabase = await createClient()
+  
+  const id = formData.get('id') as string
+  const judul = formData.get('judul') as string
+  const deskripsi = formData.get('deskripsi') as string
+  const tanggal_pelaksanaan = formData.get('tanggal_pelaksanaan') as string
+  const lokasi = formData.get('lokasi') as string
+  const status = formData.get('status') as string || 'selesai'
+  
+  if (!id || !judul || !deskripsi || !tanggal_pelaksanaan) {
+    return { error: 'Judul, deskripsi, dan tanggal harus diisi' }
+  }
+
+  const { error } = await supabase
+    .from('kegiatan')
+    .update({
+      judul,
+      deskripsi,
+      tanggal_pelaksanaan,
+      lokasi,
+      status
+    })
+    .eq('id', id)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/dashboard/kegiatan')
+  revalidatePath('/kegiatan')
+  return { success: true }
+}
+
 export async function deleteKegiatan(id: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('kegiatan').delete().eq('id', id)

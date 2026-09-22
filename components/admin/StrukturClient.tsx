@@ -4,37 +4,63 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Trash2, Pencil, Users, Mail, Phone } from 'lucide-react'
-import { createStruktur, deleteStruktur } from '@/app/actions/struktur'
+import { createStruktur, updateStruktur, deleteStruktur } from '@/app/actions/struktur'
 import { ImageUploader } from './ImageUploader'
 import Image from 'next/image'
 
 export default function StrukturClient({ data }: { data: any[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  
+  // Edit State
+  const [editItem, setEditItem] = useState<any>(null)
   const [fotoUrl, setFotoUrl] = useState('')
+  
+  // Delete State
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  async function handleCreate(formData: FormData) {
+  function openCreate() {
+    setEditItem(null)
+    setFotoUrl('')
+    setIsOpen(true)
+  }
+
+  function openEdit(item: any) {
+    setEditItem(item)
+    setFotoUrl(item.foto_url || '')
+    setIsOpen(true)
+  }
+
+  async function handleSubmit(formData: FormData) {
     setLoading(true)
     formData.append('foto_url', fotoUrl)
-    const result = await createStruktur(formData)
+    
+    const result = editItem 
+      ? await updateStruktur(formData) 
+      : await createStruktur(formData)
+      
     setLoading(false)
     
     if (result.error) {
       alert(result.error)
     } else {
       setIsOpen(false)
+      setEditItem(null)
       setFotoUrl('')
     }
   }
 
-  async function handleDelete(id: string) {
-    if (confirm('Apakah Anda yakin ingin menghapus data pengurus ini?')) {
-      await deleteStruktur(id)
-    }
+  async function confirmDelete() {
+    if (!deleteId) return
+    setLoading(true)
+    await deleteStruktur(deleteId)
+    setLoading(false)
+    setDeleteId(null)
   }
 
   return (
@@ -45,86 +71,107 @@ export default function StrukturClient({ data }: { data: any[] }) {
           <p className="text-muted-foreground text-sm mt-1">Kelola data pengurus Karang Taruna.</p>
         </div>
         
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger render={<Button className="bg-primary hover:bg-primary/90" />}>
-            <Plus className="mr-2 h-4 w-4" /> Tambah Pengurus
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Tambah Pengurus Baru</DialogTitle>
-            </DialogHeader>
-            <form action={handleCreate} className="space-y-4 pt-4">
-              
-              <div className="space-y-2">
-                <Label>Foto Pengurus (Opsional)</Label>
-                <ImageUploader 
-                  folder="pengurus"
-                  onUploadSuccess={(url) => setFotoUrl(url)}
-                  onUploadError={(err) => alert(err.message)}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="nama_lengkap">Nama Lengkap</Label>
-                  <Input id="nama_lengkap" name="nama_lengkap" required placeholder="Contoh: Budi Santoso" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="jabatan">Jabatan</Label>
-                  <Input id="jabatan" name="jabatan" required placeholder="Contoh: Ketua" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="periode">Periode</Label>
-                  <Input id="periode" name="periode" required placeholder="Contoh: 2024-2027" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="divisi">Divisi (Opsional)</Label>
-                  <Input id="divisi" name="divisi" placeholder="Contoh: Olahraga" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="no_telepon">No. Telepon (Opsional)</Label>
-                  <Input id="no_telepon" name="no_telepon" placeholder="Contoh: 08123456789" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email (Opsional)</Label>
-                  <Input id="email" name="email" type="email" placeholder="Contoh: budi@gmail.com" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="urutan">Nomor Urut Tampil</Label>
-                  <Input id="urutan" name="urutan" type="number" defaultValue="0" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="is_active">Status Aktif</Label>
-                  <select 
-                    id="is_active" 
-                    name="is_active" 
-                    className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="true">Aktif</option>
-                    <option value="false">Tidak Aktif</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Batal</Button>
-                <Button type="submit" disabled={loading}>
-                  {loading ? 'Menyimpan...' : 'Simpan Pengurus'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button className="bg-primary hover:bg-primary/90" onClick={openCreate}>
+          <Plus className="mr-2 h-4 w-4" /> Tambah Pengurus
+        </Button>
       </div>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editItem ? 'Edit Pengurus' : 'Tambah Pengurus Baru'}</DialogTitle>
+          </DialogHeader>
+          <form action={handleSubmit} className="space-y-4 pt-4">
+            {editItem && <input type="hidden" name="id" value={editItem.id} />}
+            
+            <div className="space-y-2">
+              <Label>Foto Pengurus (Opsional)</Label>
+              <ImageUploader 
+                folder="pengurus"
+                defaultImage={editItem?.foto_url}
+                onUploadSuccess={(url) => setFotoUrl(url)}
+                onUploadError={(err) => alert(err.message)}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="nama_lengkap">Nama Lengkap</Label>
+                <Input id="nama_lengkap" name="nama_lengkap" required defaultValue={editItem?.nama_lengkap || ''} placeholder="Contoh: Budi Santoso" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="jabatan">Jabatan</Label>
+                <Input id="jabatan" name="jabatan" required defaultValue={editItem?.jabatan || ''} placeholder="Contoh: Ketua" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="periode">Periode</Label>
+                <Input id="periode" name="periode" required defaultValue={editItem?.periode || ''} placeholder="Contoh: 2024-2027" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="divisi">Divisi (Opsional)</Label>
+                <Input id="divisi" name="divisi" defaultValue={editItem?.divisi || ''} placeholder="Contoh: Olahraga" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="no_telepon">No. Telepon (Opsional)</Label>
+                <Input id="no_telepon" name="no_telepon" defaultValue={editItem?.no_telepon || ''} placeholder="Contoh: 08123456789" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email (Opsional)</Label>
+                <Input id="email" name="email" type="email" defaultValue={editItem?.email || ''} placeholder="Contoh: budi@gmail.com" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="urutan">Nomor Urut Tampil</Label>
+                <Input id="urutan" name="urutan" type="number" defaultValue={editItem?.urutan || '0'} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="is_active">Status Aktif</Label>
+                <select 
+                  id="is_active" 
+                  name="is_active" 
+                  defaultValue={editItem ? String(editItem.is_active) : 'true'}
+                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="true">Aktif</option>
+                  <option value="false">Tidak Aktif</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-3 pt-4">
+              <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Batal</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? 'Menyimpan...' : 'Simpan Pengurus'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus data pengurus ini secara permanen dari server.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading}>Batal</AlertDialogCancel>
+            <AlertDialogAction disabled={loading} onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
+              {loading ? 'Menghapus...' : 'Ya, Hapus'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="rounded-md border bg-card">
         <Table>
@@ -191,14 +238,14 @@ export default function StrukturClient({ data }: { data: any[] }) {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Button variant="ghost" size="icon-sm" className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50">
+                    <Button variant="ghost" size="icon-sm" onClick={() => openEdit(item)} className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50">
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button 
                       variant="ghost" 
                       size="icon-sm" 
+                      onClick={() => setDeleteId(item.id)}
                       className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-                      onClick={() => handleDelete(item.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

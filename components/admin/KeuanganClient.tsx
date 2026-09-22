@@ -4,38 +4,64 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Plus, Trash2, Pencil, Calendar as CalendarIcon, TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
-import { createKeuangan, deleteKeuangan } from '@/app/actions/keuangan'
+import { createKeuangan, updateKeuangan, deleteKeuangan } from '@/app/actions/keuangan'
 import { ImageUploader } from './ImageUploader'
 import { Card, CardContent } from '@/components/ui/card'
 
 export default function KeuanganClient({ data, saldo }: { data: any[], saldo: number }) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  
+  // Edit State
+  const [editItem, setEditItem] = useState<any>(null)
   const [buktiUrl, setBuktiUrl] = useState('')
+  
+  // Delete State
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  async function handleCreate(formData: FormData) {
+  function openCreate() {
+    setEditItem(null)
+    setBuktiUrl('')
+    setIsOpen(true)
+  }
+
+  function openEdit(item: any) {
+    setEditItem(item)
+    setBuktiUrl(item.bukti_url || '')
+    setIsOpen(true)
+  }
+
+  async function handleSubmit(formData: FormData) {
     setLoading(true)
     formData.append('bukti_url', buktiUrl)
-    const result = await createKeuangan(formData)
+    
+    const result = editItem 
+      ? await updateKeuangan(formData) 
+      : await createKeuangan(formData)
+      
     setLoading(false)
     
     if (result.error) {
       alert(result.error)
     } else {
       setIsOpen(false)
+      setEditItem(null)
       setBuktiUrl('')
     }
   }
 
-  async function handleDelete(id: string) {
-    if (confirm('Apakah Anda yakin ingin menghapus transaksi ini? Saldo akan disesuaikan kembali.')) {
-      await deleteKeuangan(id)
-    }
+  async function confirmDelete() {
+    if (!deleteId) return
+    setLoading(true)
+    await deleteKeuangan(deleteId)
+    setLoading(false)
+    setDeleteId(null)
   }
 
   const formatRupiah = (angka: number) => {
@@ -54,75 +80,97 @@ export default function KeuanganClient({ data, saldo }: { data: any[], saldo: nu
           <p className="text-muted-foreground text-sm mt-1">Kelola transparansi dana, kas masuk, dan keluar.</p>
         </div>
         
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogTrigger render={<Button className="bg-primary hover:bg-primary/90" />}>
-            <Plus className="mr-2 h-4 w-4" /> Catat Transaksi
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Catat Transaksi Baru</DialogTitle>
-            </DialogHeader>
-            <form action={handleCreate} className="space-y-4 pt-4">
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="tanggal">Tanggal Transaksi</Label>
-                  <Input id="tanggal" name="tanggal" type="date" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tipe">Tipe Transaksi</Label>
-                  <select 
-                    id="tipe" 
-                    name="tipe" 
-                    className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="pemasukan">Pemasukan (+)</option>
-                    <option value="pengeluaran">Pengeluaran (-)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="kategori">Kategori</Label>
-                  <Input id="kategori" name="kategori" required placeholder="Contoh: Iuran Anggota, Konsumsi" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="jumlah">Jumlah (Rp)</Label>
-                  <Input id="jumlah" name="jumlah" type="number" required placeholder="150000" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="keterangan">Keterangan / Rincian</Label>
-                <textarea 
-                  id="keterangan" 
-                  name="keterangan" 
-                  required
-                  className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="Keterangan lengkap untuk transaksi ini..."
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Bukti Transaksi (Struk/Nota/Kwitansi)</Label>
-                <ImageUploader 
-                  folder="keuangan"
-                  onUploadSuccess={(url) => setBuktiUrl(url)}
-                  onUploadError={(err) => alert(err.message)}
-                />
-              </div>
-              
-              <div className="flex justify-end gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Batal</Button>
-                <Button type="submit" disabled={loading}>
-                  {loading ? 'Menyimpan...' : 'Simpan Transaksi'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <Button className="bg-primary hover:bg-primary/90" onClick={openCreate}>
+          <Plus className="mr-2 h-4 w-4" /> Catat Transaksi
+        </Button>
       </div>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{editItem ? 'Edit Transaksi' : 'Catat Transaksi Baru'}</DialogTitle>
+          </DialogHeader>
+          <form action={handleSubmit} className="space-y-4 pt-4">
+            {editItem && <input type="hidden" name="id" value={editItem.id} />}
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tanggal">Tanggal Transaksi</Label>
+                <Input id="tanggal" name="tanggal" type="date" required defaultValue={editItem ? editItem.tanggal.split('T')[0] : ''} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tipe">Tipe Transaksi</Label>
+                <select 
+                  id="tipe" 
+                  name="tipe" 
+                  defaultValue={editItem?.tipe || 'pemasukan'}
+                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="pemasukan">Pemasukan (+)</option>
+                  <option value="pengeluaran">Pengeluaran (-)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="kategori">Kategori</Label>
+                <Input id="kategori" name="kategori" required defaultValue={editItem?.kategori || ''} placeholder="Contoh: Iuran Anggota, Konsumsi" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="jumlah">Jumlah (Rp)</Label>
+                <Input id="jumlah" name="jumlah" type="number" required defaultValue={editItem?.jumlah || ''} placeholder="150000" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="keterangan">Keterangan / Rincian</Label>
+              <textarea 
+                id="keterangan" 
+                name="keterangan" 
+                required
+                defaultValue={editItem?.keterangan || ''}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Keterangan lengkap untuk transaksi ini..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Bukti Transaksi (Struk/Nota/Kwitansi)</Label>
+              <ImageUploader 
+                folder="keuangan"
+                defaultImage={editItem?.bukti_url}
+                onUploadSuccess={(url) => setBuktiUrl(url)}
+                onUploadError={(err) => alert(err.message)}
+              />
+            </div>
+            
+            <div className="flex justify-end gap-3 pt-4">
+              <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>Batal</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? 'Menyimpan...' : 'Simpan Transaksi'}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Ini akan menghapus transaksi dan menyesuaikan kembali total saldo kas.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading}>Batal</AlertDialogCancel>
+            <AlertDialogAction disabled={loading} onClick={confirmDelete} className="bg-destructive hover:bg-destructive/90">
+              {loading ? 'Menghapus...' : 'Ya, Hapus'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card className="bg-primary text-primary-foreground">
@@ -191,11 +239,14 @@ export default function KeuanganClient({ data, saldo }: { data: any[], saldo: nu
                     {item.tipe === 'pemasukan' ? '+' : '-'} {formatRupiah(item.jumlah)}
                   </TableCell>
                   <TableCell className="text-right space-x-2">
+                    <Button variant="ghost" size="icon-sm" onClick={() => openEdit(item)} className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Button 
                       variant="ghost" 
                       size="icon-sm" 
                       className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => setDeleteId(item.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

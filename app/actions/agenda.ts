@@ -63,6 +63,44 @@ export async function createAgenda(formData: FormData) {
   return { success: true }
 }
 
+export async function updateAgenda(formData: FormData) {
+  const supabase = await createClient()
+  
+  const id = formData.get('id') as string
+  const judul = formData.get('judul') as string
+  const deskripsi = formData.get('deskripsi') as string
+  const tanggal_mulai = formData.get('tanggal_mulai') as string
+  const tanggal_selesai = formData.get('tanggal_selesai') as string || null
+  const lokasi = formData.get('lokasi') as string
+  const status = formData.get('status') as string || 'akan_datang'
+  const kategori = formData.get('kategori') as string || null
+  
+  if (!id || !judul || !tanggal_mulai) {
+    return { error: 'Judul dan tanggal mulai harus diisi' }
+  }
+
+  const { error } = await supabase
+    .from('agenda')
+    .update({
+      judul,
+      deskripsi,
+      tanggal_mulai,
+      tanggal_selesai,
+      lokasi,
+      status,
+      kategori
+    })
+    .eq('id', id)
+
+  if (error) {
+    return { error: error.message }
+  }
+
+  revalidatePath('/dashboard/agenda')
+  revalidatePath('/agenda')
+  return { success: true }
+}
+
 export async function deleteAgenda(id: string) {
   const supabase = await createClient()
   const { error } = await supabase.from('agenda').delete().eq('id', id)
