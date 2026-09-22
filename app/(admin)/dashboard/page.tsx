@@ -1,7 +1,38 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Users, FileText, Image as ImageIcon } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import { getSaldoKas, getKeuangan } from '@/app/actions/keuangan'
+import { KeuanganChart } from '@/components/admin/KeuanganChart'
 
-export default function DashboardOverview() {
+export const metadata = {
+  title: 'Dashboard Admin | Tirtajaya 01'
+}
+
+export default async function DashboardOverview() {
+  const supabase = await createClient()
+
+  const [
+    { count: countKegiatan },
+    { count: countAgenda },
+    { count: countPengurus },
+    saldoKas,
+    dataKeuangan
+  ] = await Promise.all([
+    supabase.from('kegiatan').select('*', { count: 'exact', head: true }),
+    supabase.from('agenda').select('*', { count: 'exact', head: true }).eq('status', 'akan_datang'),
+    supabase.from('struktur_organisasi').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    getSaldoKas(),
+    getKeuangan()
+  ])
+
+  const formatRupiah = (angka: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(angka)
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -16,7 +47,7 @@ export default function DashboardOverview() {
             <ImageIcon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">{countKegiatan || 0}</div>
           </CardContent>
         </Card>
         
@@ -26,7 +57,7 @@ export default function DashboardOverview() {
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">{countAgenda || 0}</div>
           </CardContent>
         </Card>
         
@@ -36,7 +67,7 @@ export default function DashboardOverview() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">45</div>
+            <div className="text-2xl font-bold">{countPengurus || 0}</div>
           </CardContent>
         </Card>
         
@@ -46,9 +77,13 @@ export default function DashboardOverview() {
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Rp 2.500.000</div>
+            <div className="text-2xl font-bold text-primary">{formatRupiah(saldoKas)}</div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-1">
+        <KeuanganChart data={dataKeuangan} />
       </div>
     </div>
   )

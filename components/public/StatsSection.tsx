@@ -4,31 +4,46 @@ import { motion } from 'framer-motion'
 import { Users, CalendarCheck, Wallet } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 
-const stats = [
-  {
-    title: "Anggota Aktif",
-    value: "45+",
-    icon: Users,
-    color: "text-blue-500",
-    bg: "bg-blue-500/10"
-  },
-  {
-    title: "Program Sukses",
-    value: "24",
-    icon: CalendarCheck,
-    color: "text-indigo-500",
-    bg: "bg-indigo-500/10"
-  },
-  {
-    title: "Transparansi Dana",
-    value: "100%",
-    icon: Wallet,
-    color: "text-amber-500",
-    bg: "bg-amber-500/10"
+export default function StatsSection({
+  anggotaAktif = 0,
+  programSukses = 0,
+  saldoKas = 0
+}: {
+  anggotaAktif?: number
+  programSukses?: number
+  saldoKas?: number
+}) {
+  const formatRupiahCompact = (angka: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      notation: "compact",
+      compactDisplay: "short"
+    }).format(angka)
   }
-]
 
-export default function StatsSection() {
+  const stats = [
+    {
+      title: "Anggota Aktif",
+      value: `${anggotaAktif}+`,
+      icon: Users,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10"
+    },
+    {
+      title: "Program Sukses",
+      value: `${programSukses}`,
+      icon: CalendarCheck,
+      color: "text-indigo-500",
+      bg: "bg-indigo-500/10"
+    },
+    {
+      title: "Kas Tersedia",
+      value: `Rp ${formatRupiahCompact(saldoKas)}`,
+      icon: Wallet,
+      color: "text-amber-500",
+      bg: "bg-amber-500/10"
+    }
+  ]
+
   return (
     <section className="py-12 bg-muted/30">
       <div className="container mx-auto px-4 md:px-6">

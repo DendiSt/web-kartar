@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 const navLinks = [
   { href: "/", label: "Beranda" },
@@ -46,6 +47,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
+          <ThemeToggle />
           <Link href="/login">
             <Button variant="default" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6">
               Admin
@@ -74,6 +76,10 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <div className="flex items-center justify-between px-2 mt-2">
+                <span className="text-sm font-medium text-muted-foreground">Tema Tampilan</span>
+                <ThemeToggle />
+              </div>
               <div className="mt-4 pt-4 border-t">
                 <Link href="/login">
                   <Button className="w-full bg-primary hover:bg-primary/90 rounded-full">

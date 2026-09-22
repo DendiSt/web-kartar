@@ -6,6 +6,7 @@ import { LayoutDashboard, Calendar, Users, FileText, Settings, LogOut, Image as 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { logout } from '@/app/actions/auth'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 const sidebarLinks = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -47,7 +48,11 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="pt-6 border-t mt-auto">
+      <div className="pt-6 border-t mt-auto space-y-4">
+        <div className="flex items-center justify-between px-3">
+          <span className="text-sm font-medium text-muted-foreground">Tema Gelap</span>
+          <ThemeToggle />
+        </div>
         <form action={logout}>
           <Button variant="ghost" type="submit" className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10">
             <LogOut className="mr-2 h-4 w-4" />

@@ -16,15 +16,24 @@ export const metadata: Metadata = {
   description: 'Website Resmi Karang Taruna Dusun Tirtajaya 01',
 }
 
+import { ThemeProvider } from '@/components/ThemeProvider'
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <html lang="id" className={cn(poppins.variable, "font-sans", geist.variable)}>
+    <html lang="id" className={cn(poppins.variable, "font-sans", geist.variable)} suppressHydrationWarning>
       <body className="antialiased min-h-screen flex flex-col font-sans bg-background text-foreground">
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

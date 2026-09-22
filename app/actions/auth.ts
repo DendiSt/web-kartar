@@ -64,11 +64,13 @@ export async function login(formData: FormData) {
 
   if (adminError) {
     console.error('Admin check error:', adminError.message)
+    await supabase.auth.signOut()
+    return { error: `DB Error: ${adminError.message} (Code: ${adminError.code})` }
   }
 
   if (!adminData) {
     await supabase.auth.signOut()
-    return { error: 'Anda tidak memiliki akses admin' }
+    return { error: `Akses ditolak: UID ${data.user.id} tidak ditemukan di tabel admins.` }
   }
 
   redirect('/dashboard')
