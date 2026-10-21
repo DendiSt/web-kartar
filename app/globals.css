@@ -6,6 +6,22 @@
 @theme inline {
   --font-heading: var(--font-heading);
   --font-sans: var(--font-sans);
+  --font-charlie-display: var(--font-heading);
+  --font-charlie-text: var(--font-sans);
+
+  /* Atlassian Color Palette from DESIGN.md */
+  --color-atlassian-blue: #1868db;
+  --color-midnight-navy: #101214;
+  --color-carbon-edge: #292a2e;
+  --color-slate-current: #1c2b42;
+  --color-muted-indigo: #42526e;
+  --color-pure-white: #ffffff;
+  --color-fog-white: #f0f1f2;
+  --color-ash-gray: #b7b9be;
+  --color-taxicab-yellow: #fca700;
+  --color-lavender-wash: #eed7fc;
+  --color-confetti-violet: #bf63f3;
+  --color-confetti-green: #36b37e;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -42,110 +58,124 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  /* Atlassian Shape Tokens */
+  --radius-cards: 20px;
+  --radius-buttons: 28px;
+  --radius-images: 5px;
+  --radius-inputs: 8px;
+  --radius-tags: 10000px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
 }
 
-/* ── Light Mode ── Sky Blue & Slate ── */
+/* ── Light Mode — Atlassian Canvas ── */
 :root {
-  --background: oklch(0.98 0.005 240);    /* Slate 50 */
-  --foreground: oklch(0.15 0.02 260);     /* Slate 950 */
+  --color-atlassian-blue: #1868db;
+  --color-midnight-navy: #101214;
+  --color-carbon-edge: #292a2e;
+  --color-slate-current: #1c2b42;
+  --color-muted-indigo: #42526e;
+  --color-pure-white: #ffffff;
+  --color-fog-white: #f0f1f2;
+  --color-ash-gray: #b7b9be;
+  --color-taxicab-yellow: #fca700;
+  --color-lavender-wash: #eed7fc;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 260);
+  /* Surfaces */
+  --background: #ffffff;
+  --foreground: #101214;
 
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 260);
+  --card: #ffffff;
+  --card-foreground: #101214;
 
-  /* Sky Blue #0EA5E9 */
-  --primary: oklch(0.68 0.16 230);
-  --primary-foreground: oklch(0.98 0.005 240);
+  --popover: #ffffff;
+  --popover-foreground: #101214;
 
-  /* Indigo #6366F1 */
-  --secondary: oklch(0.55 0.2 270);
-  --secondary-foreground: oklch(0.98 0.005 240);
+  /* Primary Action: Atlassian Blue #1868db */
+  --primary: #1868db;
+  --primary-foreground: #ffffff;
 
-  --muted: oklch(0.96 0.005 240);
-  --muted-foreground: oklch(0.55 0.02 250);
+  /* Secondary: Fog White #f0f1f2 */
+  --secondary: #f0f1f2;
+  --secondary-foreground: #101214;
 
-  /* Amber #F59E0B */
-  --accent: oklch(0.78 0.17 75);
-  --accent-foreground: oklch(0.15 0.02 260);
+  /* Muted */
+  --muted: #f0f1f2;
+  --muted-foreground: #42526e;
 
-  --destructive: oklch(0.58 0.22 27);
-  --destructive-foreground: oklch(0.98 0 0);
+  /* Accent: Lavender Wash #eed7fc */
+  --accent: #eed7fc;
+  --accent-foreground: #101214;
 
-  --border: oklch(0.92 0.005 240);
-  --input: oklch(0.92 0.005 240);
-  --ring: oklch(0.68 0.16 230);
+  --destructive: #de350b;
+  --destructive-foreground: #ffffff;
 
-  --chart-1: oklch(0.68 0.16 230);
-  --chart-2: oklch(0.55 0.2 270);
-  --chart-3: oklch(0.78 0.17 75);
-  --chart-4: oklch(0.65 0.18 150);
-  --chart-5: oklch(0.60 0.20 320);
+  --border: #f0f1f2;
+  --input: #b7b9be;
+  --ring: #1868db;
 
-  --radius: 0.75rem;
+  --radius: 20px;
 
-  --sidebar: oklch(0.985 0.005 240);
-  --sidebar-foreground: oklch(0.15 0.02 260);
-  --sidebar-primary: oklch(0.68 0.16 230);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.96 0.005 240);
-  --sidebar-accent-foreground: oklch(0.15 0.02 260);
-  --sidebar-border: oklch(0.92 0.005 240);
-  --sidebar-ring: oklch(0.68 0.16 230);
+  /* Charts */
+  --chart-1: #1868db;
+  --chart-2: #bf63f3;
+  --chart-3: #fca700;
+  --chart-4: #36b37e;
+  --chart-5: #42526e;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #101214;
+  --sidebar-primary: #1868db;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0f1f2;
+  --sidebar-accent-foreground: #101214;
+  --sidebar-border: #f0f1f2;
+  --sidebar-ring: #1868db;
 }
 
-/* ── Dark Mode ── */
+/* ── Dark Mode — Midnight Navy Panel ── */
 .dark {
-  --background: oklch(0.15 0.02 260);
-  --foreground: oklch(0.98 0.005 240);
+  --background: #101214;
+  --foreground: #ffffff;
 
-  --card: oklch(0.20 0.02 260);
-  --card-foreground: oklch(0.98 0.005 240);
+  --card: #181b20;
+  --card-foreground: #ffffff;
 
-  --popover: oklch(0.20 0.02 260);
-  --popover-foreground: oklch(0.98 0.005 240);
+  --popover: #181b20;
+  --popover-foreground: #ffffff;
 
-  --primary: oklch(0.72 0.16 230);
-  --primary-foreground: oklch(0.15 0.02 260);
+  --primary: #1868db;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.60 0.2 270);
-  --secondary-foreground: oklch(0.98 0.005 240);
+  --secondary: #1c2b42;
+  --secondary-foreground: #ffffff;
 
-  --muted: oklch(0.27 0.02 260);
-  --muted-foreground: oklch(0.70 0.01 250);
+  --muted: #1c2b42;
+  --muted-foreground: #b7b9be;
 
-  --accent: oklch(0.80 0.17 75);
-  --accent-foreground: oklch(0.15 0.02 260);
+  --accent: #2c1a3b;
+  --accent-foreground: #eed7fc;
 
-  --destructive: oklch(0.70 0.19 22);
-  --destructive-foreground: oklch(0.98 0 0);
+  --destructive: #de350b;
+  --destructive-foreground: #ffffff;
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.72 0.16 230);
+  --border: #292a2e;
+  --input: #292a2e;
+  --ring: #1868db;
 
-  --chart-1: oklch(0.72 0.16 230);
-  --chart-2: oklch(0.60 0.2 270);
-  --chart-3: oklch(0.80 0.17 75);
-  --chart-4: oklch(0.70 0.18 150);
-  --chart-5: oklch(0.65 0.20 320);
-
-  --sidebar: oklch(0.20 0.02 260);
-  --sidebar-foreground: oklch(0.98 0.005 240);
-  --sidebar-primary: oklch(0.72 0.16 230);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.27 0.02 260);
-  --sidebar-accent-foreground: oklch(0.98 0.005 240);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.72 0.16 230);
+  --sidebar: #101214;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #1868db;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1c2b42;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #292a2e;
+  --sidebar-ring: #1868db;
 }
 
 @layer base {
@@ -153,9 +183,19 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading tracking-tight;
+    @apply font-heading tracking-[-0.012em];
   }
+}
+
+/* Atlassian Signature Utilities */
+.shadow-atlassian {
+  box-shadow: rgba(9, 30, 66, 0.31) 0px 0px 1px 0px, rgba(9, 30, 66, 0.25) 0px 1px 1px 0px;
+}
+
+.confetti-gradient {
+  background: conic-gradient(rgb(191, 99, 243) 170deg, rgb(252, 167, 0) 171deg, rgb(252, 167, 0) 230deg, rgb(77, 140, 237) 231deg, rgb(77, 140, 237) 360deg);
 }

@@ -2,7 +2,7 @@ import { getKegiatan } from '@/app/actions/kegiatan'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, MapPin, ArrowRight } from 'lucide-react'
+import { Calendar, MapPin, ArrowRight, Camera } from 'lucide-react'
 import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
 
@@ -52,6 +52,12 @@ export default async function KegiatanPublicPage() {
                     {item.status?.replace('_', ' ') || ''}
                   </span>
                 </div>
+                {item.foto_galeri && item.foto_galeri.length > 1 && (
+                  <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                    <Camera className="w-3 h-3" />
+                    <span>{item.foto_galeri.length} Foto</span>
+                  </div>
+                )}
               </div>
               <CardContent className="p-6 flex-1 space-y-4">
                 <h3 className="font-heading text-xl font-bold line-clamp-2 group-hover:text-primary transition-colors">

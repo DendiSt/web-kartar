@@ -25,7 +25,27 @@ export async function createKegiatan(formData: FormData) {
   const tanggal_pelaksanaan = formData.get('tanggal_pelaksanaan') as string
   const lokasi = formData.get('lokasi') as string
   const status = (formData.get('status') as string) || 'selesai'
-  const foto_cover = (formData.get('foto_cover') as string) || null
+  let foto_cover = (formData.get('foto_cover') as string) || null
+  const foto_galeri_raw = formData.get('foto_galeri') as string | null
+  let foto_galeri: string[] = []
+
+  if (foto_galeri_raw) {
+    try {
+      foto_galeri = JSON.parse(foto_galeri_raw)
+    } catch {
+      foto_galeri = []
+    }
+  }
+
+  // Ensure cover is set from gallery if empty
+  if (!foto_cover && foto_galeri.length > 0) {
+    foto_cover = foto_galeri[0]
+  }
+
+  // Ensure cover is part of gallery
+  if (foto_cover && !foto_galeri.includes(foto_cover)) {
+    foto_galeri = [foto_cover, ...foto_galeri]
+  }
 
   if (!judul || !deskripsi || !tanggal_pelaksanaan) {
     return { error: 'Judul, deskripsi, dan tanggal harus diisi' }
@@ -56,13 +76,14 @@ export async function createKegiatan(formData: FormData) {
         lokasi,
         status,
         foto_cover,
-        foto_galeri: [],
+        foto_galeri,
         created_by: adminId
       }
     })
 
     revalidatePath('/dashboard/kegiatan')
     revalidatePath('/kegiatan')
+    revalidatePath('/')
     return { success: true }
   } catch (error: any) {
     return { error: error.message }
@@ -76,7 +97,27 @@ export async function updateKegiatan(formData: FormData) {
   const tanggal_pelaksanaan = formData.get('tanggal_pelaksanaan') as string
   const lokasi = formData.get('lokasi') as string
   const status = (formData.get('status') as string) || 'selesai'
-  const foto_cover = formData.get('foto_cover') as string | null
+  let foto_cover = (formData.get('foto_cover') as string) || null
+  const foto_galeri_raw = formData.get('foto_galeri') as string | null
+  let foto_galeri: string[] = []
+
+  if (foto_galeri_raw) {
+    try {
+      foto_galeri = JSON.parse(foto_galeri_raw)
+    } catch {
+      foto_galeri = []
+    }
+  }
+
+  // Ensure cover is set from gallery if empty
+  if (!foto_cover && foto_galeri.length > 0) {
+    foto_cover = foto_galeri[0]
+  }
+
+  // Ensure cover is part of gallery
+  if (foto_cover && !foto_galeri.includes(foto_cover)) {
+    foto_galeri = [foto_cover, ...foto_galeri]
+  }
 
   if (!id || !judul || !deskripsi || !tanggal_pelaksanaan) {
     return { error: 'Judul, deskripsi, dan tanggal harus diisi' }
@@ -91,12 +132,14 @@ export async function updateKegiatan(formData: FormData) {
         tanggal_pelaksanaan: new Date(tanggal_pelaksanaan),
         lokasi,
         status,
-        ...(foto_cover !== null && foto_cover !== '' ? { foto_cover } : {})
+        foto_cover: foto_cover || null,
+        foto_galeri
       }
     })
 
     revalidatePath('/dashboard/kegiatan')
     revalidatePath('/kegiatan')
+    revalidatePath('/')
     return { success: true }
   } catch (error: any) {
     return { error: error.message }

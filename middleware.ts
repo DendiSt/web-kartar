@@ -67,6 +67,22 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // 3. Handle route /admin agar otomatis mengarahkan ke /dashboard (jika sudah login) atau ke /login
+  if (request.nextUrl.pathname === '/admin' || request.nextUrl.pathname === '/admin/') {
+    if (user) {
+      const { data: admin } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('user_id', user.id)
+        .single()
+        
+      if (admin) {
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+    }
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
   return supabaseResponse
 }
 

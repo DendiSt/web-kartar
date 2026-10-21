@@ -1,15 +1,16 @@
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import { Calendar, MapPin, ArrowLeft } from 'lucide-react'
 import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
+import { KegiatanDetailViewer } from '@/components/public/KegiatanDetailViewer'
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const data = await prisma.kegiatan.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     select: { judul: true }
   })
   return {
@@ -17,13 +18,25 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function KegiatanDetailPage({ params }: { params: { slug: string } }) {
+export default async function KegiatanDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const item = await prisma.kegiatan.findUnique({
-    where: { slug: params.slug }
+    where: { slug }
   })
 
   if (!item) {
     notFound()
+  }
+
+  // Unified photo list: cover first, then gallery photos
+  const allImages: string[] = []
+  if (item.foto_cover) allImages.push(item.foto_cover)
+  if (item.foto_galeri && Array.isArray(item.foto_galeri)) {
+    for (const img of item.foto_galeri) {
+      if (!allImages.includes(img)) {
+        allImages.push(img)
+      }
+    }
   }
 
   return (
@@ -52,23 +65,11 @@ export default async function KegiatanDetailPage({ params }: { params: { slug: s
         </div>
       </div>
 
-      {item.foto_cover && (
-        <div className="aspect-video relative rounded-xl overflow-hidden border bg-muted">
-          <Image 
-            src={item.foto_cover} 
-            alt={item.judul} 
-            fill 
-            className="object-cover"
-            priority
-          />
-        </div>
-      )}
-
-      <div className="prose prose-slate max-w-none dark:prose-invert">
-        {item.deskripsi.split('\n').map((paragraph: string, idx: number) => (
-          <p key={idx}>{paragraph}</p>
-        ))}
-      </div>
+      <KegiatanDetailViewer 
+        images={allImages}
+        title={item.judul}
+        description={item.deskripsi}
+      />
     </div>
   )
 }

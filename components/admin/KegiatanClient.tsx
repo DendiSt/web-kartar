@@ -8,10 +8,11 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Plus, Trash2, Pencil, MapPin, Calendar as CalendarIcon } from 'lucide-react'
+import { Plus, Trash2, Pencil, MapPin, Calendar as CalendarIcon, ImageIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
 import { createKegiatan, updateKegiatan, deleteKegiatan } from '@/app/actions/kegiatan'
+import { MultiImageUploader } from '@/components/admin/MultiImageUploader'
 
 export default function KegiatanClient({ data }: { data: any[] }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -19,22 +20,34 @@ export default function KegiatanClient({ data }: { data: any[] }) {
   
   // Edit State
   const [editItem, setEditItem] = useState<any>(null)
+  const [fotoList, setFotoList] = useState<string[]>([])
   
   // Delete State
   const [deleteId, setDeleteId] = useState<string | null>(null)
 
   function openCreate() {
     setEditItem(null)
+    setFotoList([])
     setIsOpen(true)
   }
 
   function openEdit(item: any) {
     setEditItem(item)
+    const initialList: string[] = []
+    if (item.foto_cover) initialList.push(item.foto_cover)
+    if (item.foto_galeri && Array.isArray(item.foto_galeri)) {
+      for (const f of item.foto_galeri) {
+        if (!initialList.includes(f)) initialList.push(f)
+      }
+    }
+    setFotoList(initialList)
     setIsOpen(true)
   }
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
+    formData.set('foto_cover', fotoList[0] || '')
+    formData.set('foto_galeri', JSON.stringify(fotoList))
     const result = editItem 
       ? await updateKegiatan(formData) 
       : await createKegiatan(formData)
@@ -46,6 +59,7 @@ export default function KegiatanClient({ data }: { data: any[] }) {
     } else {
       setIsOpen(false)
       setEditItem(null)
+      setFotoList([])
     }
   }
 
@@ -71,16 +85,35 @@ export default function KegiatanClient({ data }: { data: any[] }) {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editItem ? 'Edit Kegiatan' : 'Tambah Kegiatan Baru'}</DialogTitle>
           </DialogHeader>
-          <form action={handleSubmit} className="space-y-4 pt-4">
+          <form action={handleSubmit} className="space-y-4 pt-2">
             {editItem && <input type="hidden" name="id" value={editItem.id} />}
+            <input type="hidden" name="foto_cover" value={fotoList[0] || ''} />
+            <input type="hidden" name="foto_galeri" value={JSON.stringify(fotoList)} />
+
             <div className="space-y-2">
               <Label htmlFor="judul">Judul Kegiatan</Label>
               <Input id="judul" name="judul" required defaultValue={editItem?.judul || ''} placeholder="Contoh: Kerja Bakti Desa" />
             </div>
+
+            {/* Input Galeri & Foto Cover */}
+            <div className="space-y-2">
+              <Label>Foto Kegiatan & Dokumentasi (Maksimal 15 Foto)</Label>
+              <MultiImageUploader 
+                bucket="kegiatan" 
+                folder="galeri" 
+                maxImages={15}
+                images={fotoList} 
+                onChange={setFotoList} 
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Foto pertama otomatis menjadi cover utama di kartu kegiatan & beranda. Anda dapat mengubah cover dengan klik "Jadikan Cover".
+              </p>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="deskripsi">Deskripsi</Label>
               <textarea 
@@ -164,9 +197,29 @@ export default function KegiatanClient({ data }: { data: any[] }) {
               data.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">
-                    {item.judul}
-                    <div className="text-xs text-muted-foreground truncate max-w-[250px] mt-1">
-                      {item.deskripsi}
+                    <div className="flex items-center gap-3">
+                      {item.foto_cover ? (
+                        <img 
+                          src={item.foto_cover} 
+                          alt={item.judul} 
+                          className="w-10 h-10 rounded-[6px] object-cover border border-border flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-[6px] bg-muted flex items-center justify-center text-muted-foreground border border-border flex-shrink-0">
+                          <ImageIcon className="h-4 w-4 opacity-40" />
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <div className="font-semibold text-foreground truncate max-w-[220px]">{item.judul}</div>
+                        <div className="text-xs text-muted-foreground truncate max-w-[220px] mt-0.5">
+                          {item.deskripsi}
+                        </div>
+                        {item.foto_galeri && item.foto_galeri.length > 1 && (
+                          <span className="inline-flex items-center text-[10px] font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full mt-1">
+                            {item.foto_galeri.length} foto
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>

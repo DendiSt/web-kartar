@@ -23,69 +23,64 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <img src="/images/logo.png" alt="Logo Karang Taruna" className="h-12 w-auto object-contain drop-shadow-sm" />
-          <span className="font-heading font-bold text-lg text-primary hidden sm:inline-block">
-            Tirtajaya 01
+    <header className="sticky top-0 z-50 w-full border-b border-[#f0f1f2] dark:border-[#292a2e] bg-white/95 dark:bg-[#101214]/95 backdrop-blur-sm transition-colors">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 max-w-[1200px]">
+        <Link href="/" className="flex items-center gap-2.5">
+          <img src="/images/logo.png" alt="Logo Karang Taruna" className="h-10 w-auto object-contain drop-shadow-sm" />
+          <span className="font-heading font-bold text-lg text-[#101214] dark:text-white hidden sm:inline-block tracking-tight">
+            Tirtajaya <span className="text-[#1868db]">01</span>
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`transition-colors hover:text-primary ${pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
+        <nav className="hidden md:flex items-center gap-7 text-sm font-medium">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`transition-colors py-1 ${
+                  isActive
+                    ? "text-[#1868db] font-semibold"
+                    : "text-[#101214] dark:text-gray-300 hover:text-[#1868db] dark:hover:text-[#1868db]"
                 }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
         </nav>
 
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
           <ThemeToggle />
-          <Link href="/login">
-            <Button variant="default" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-6">
-              Admin
-            </Button>
-          </Link>
         </div>
 
         {/* Mobile Nav */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger render={<Button variant="ghost" size="icon" className="md:hidden" />}>
-            <Menu className="h-6 w-6" />
+            <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle Menu</span>
           </SheetTrigger>
           <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-            <SheetTitle className="text-left font-heading text-primary">Menu Navigasi</SheetTitle>
-            <SheetDescription className="sr-only">Navigasi halaman untuk mobile</SheetDescription>
-            <nav className="flex flex-col gap-4 mt-8">
+            <SheetTitle className="text-left font-heading font-bold text-xl mb-4">Menu Navigasi</SheetTitle>
+            <SheetDescription className="sr-only">Navigasi mobile Karang Taruna Tirtajaya 01</SheetDescription>
+            <nav className="flex flex-col gap-4 mt-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`block px-2 py-1 text-lg transition-colors hover:text-primary ${pathname === link.href ? "text-primary font-semibold" : "text-foreground/70"
-                    }`}
+                  className={`text-base font-medium transition-colors hover:text-[#1868db] ${
+                    pathname === link.href ? "text-[#1868db] font-semibold" : "text-muted-foreground"
+                  }`}
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="flex items-center justify-between px-2 mt-2">
-                <span className="text-sm font-medium text-muted-foreground">Tema Tampilan</span>
+              <div className="pt-4 border-t flex items-center justify-between">
+                <span className="text-sm font-medium">Mode Tampilan</span>
                 <ThemeToggle />
-              </div>
-              <div className="mt-4 pt-4 border-t">
-                <Link href="/login">
-                  <Button className="w-full bg-primary hover:bg-primary/90 rounded-full">
-                    Admin Login
-                  </Button>
-                </Link>
               </div>
             </nav>
           </SheetContent>
