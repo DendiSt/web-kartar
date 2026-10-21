@@ -1,6 +1,8 @@
 import { getKeuangan, getSaldoKas } from '@/app/actions/keuangan'
 import KeuanganClient from '@/components/admin/KeuanganClient'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Manajemen Keuangan | Tirtajaya 01'
 }

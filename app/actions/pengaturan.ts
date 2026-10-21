@@ -1,5 +1,6 @@
 'use server'
 
+import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
@@ -9,13 +10,15 @@ export async function getAdminProfile() {
   
   if (!user) return null
 
-  const { data } = await supabase
-    .from('admins')
-    .select('*')
-    .eq('user_id', user.id)
-    .single()
-    
-  return data
+  try {
+    const data = await prisma.admin.findFirst({
+      where: { user_id: user.id }
+    })
+    return data
+  } catch (error) {
+    console.error('Error fetching admin profile:', error)
+    return null
+  }
 }
 
 export async function updateAdminProfile(formData: FormData) {
@@ -31,18 +34,21 @@ export async function updateAdminProfile(formData: FormData) {
     return { error: 'Nama lengkap wajib diisi' }
   }
 
-  const { error } = await supabase
-    .from('admins')
-    .update({ nama_lengkap, foto_url })
-    .eq('user_id', user.id)
+  try {
+    await prisma.admin.updateMany({
+      where: { user_id: user.id },
+      data: {
+        nama_lengkap,
+        ...(foto_url ? { foto_url } : {})
+      }
+    })
 
-  if (error) {
+    revalidatePath('/dashboard/pengaturan')
+    revalidatePath('/dashboard')
+    return { success: true }
+  } catch (error: any) {
     return { error: error.message }
   }
-
-  revalidatePath('/dashboard/pengaturan')
-  revalidatePath('/dashboard') // Also updates sidebar if we fetch from there
-  return { success: true }
 }
 
 export async function updatePassword(formData: FormData) {

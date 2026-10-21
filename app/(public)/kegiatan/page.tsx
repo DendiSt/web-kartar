@@ -49,7 +49,7 @@ export default async function KegiatanPublicPage() {
                     item.status === 'selesai' ? 'bg-black/50 text-white' : 
                     item.status === 'berlangsung' ? 'bg-primary/90 text-primary-foreground' : 'bg-red-500/90 text-white'
                   }`}>
-                    {item.status.replace('_', ' ')}
+                    {item.status?.replace('_', ' ') || ''}
                   </span>
                 </div>
               </div>

@@ -6,11 +6,16 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 export async function login(formData: FormData) {
-  const email = formData.get('email') as string
+  let identifier = (formData.get('email') as string || formData.get('username') as string || '').trim().toLowerCase()
   const password = formData.get('password') as string
 
-  if (!email || !password) {
-    return { error: 'Email dan password harus diisi' }
+  if (!identifier || !password) {
+    return { error: 'Username/Email dan password harus diisi' }
+  }
+
+  let email = identifier
+  if (!email.includes('@')) {
+    email = `${identifier}@kartar.id`
   }
 
   const supabase = await createClient()

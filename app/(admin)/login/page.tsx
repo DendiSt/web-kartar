@@ -47,8 +47,8 @@ export default function LoginPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" placeholder="admin@tirtajaya01.id" required className="bg-background" />
+              <Label htmlFor="email">Username atau Email</Label>
+              <Input id="email" name="email" type="text" placeholder="admin atau email Anda" required className="bg-background" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>

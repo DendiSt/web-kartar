@@ -3,35 +3,28 @@ import StatsSection from '@/components/public/StatsSection'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { createClient } from '@/lib/supabase/server'
+import { prisma } from '@/lib/prisma'
 import { getSaldoKas } from '@/app/actions/keuangan'
 import Image from 'next/image'
 import { Calendar, MapPin } from 'lucide-react'
 import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
+import type { Kegiatan } from '@prisma/client'
 
 export default async function Home() {
-  const supabase = await createClient()
-
-  // 1. Fetch latest 3 kegiatan
-  const { data: latestKegiatan } = await supabase
-    .from('kegiatan')
-    .select('*')
-    .order('tanggal_pelaksanaan', { ascending: false })
-    .limit(3)
-
-  // 2. Fetch stats
-  const { count: countPengurus } = await supabase
-    .from('struktur_organisasi')
-    .select('*', { count: 'exact', head: true })
-    .eq('is_active', true)
-
-  const { count: countProgram } = await supabase
-    .from('kegiatan')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'selesai')
-
-  const saldoKas = await getSaldoKas()
+  const [latestKegiatan, countPengurus, countProgram, saldoKas] = await Promise.all([
+    prisma.kegiatan.findMany({
+      orderBy: { tanggal_pelaksanaan: 'desc' },
+      take: 3
+    }),
+    prisma.strukturOrganisasi.count({
+      where: { is_active: true }
+    }),
+    prisma.kegiatan.count({
+      where: { status: 'selesai' }
+    }),
+    getSaldoKas()
+  ])
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -59,7 +52,7 @@ export default async function Home() {
                 Belum ada kegiatan yang dipublikasikan.
               </div>
             ) : (
-              latestKegiatan.map((item) => (
+              latestKegiatan.map((item: Kegiatan) => (
                 <Card key={item.id} className="overflow-hidden border-border/50 shadow-sm transition-all hover:shadow-md hover:-translate-y-1 flex flex-col group">
                   <div className="aspect-video bg-muted relative overflow-hidden">
                     {item.foto_cover ? (
@@ -80,7 +73,7 @@ export default async function Home() {
                         item.status === 'selesai' ? 'bg-black/50 text-white' : 
                         item.status === 'berlangsung' ? 'bg-primary/90 text-primary-foreground' : 'bg-red-500/90 text-white'
                       }`}>
-                        {item.status.replace('_', ' ')}
+                        {item.status?.replace('_', ' ') || ''}
                       </span>
                     </div>
                   </div>

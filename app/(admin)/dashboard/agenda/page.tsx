@@ -1,6 +1,8 @@
 import { getAgenda } from '@/app/actions/agenda'
 import AgendaClient from '@/components/admin/AgendaClient'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Manajemen Agenda | Tirtajaya 01'
 }

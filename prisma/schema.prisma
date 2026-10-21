@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Profile {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_organisasi String    @db.VarChar(255)
+  nama_dusun      String    @db.VarChar(255)
+  desa            String    @db.VarChar(255)
+  kecamatan       String    @db.VarChar(255)
+  kabupaten       String    @db.VarChar(255)
+  provinsi        String    @db.VarChar(255)
+  visi            String?   @db.Text
+  misi            String?   @db.Text
+  sejarah         String?   @db.Text
+  logo_url        String?   @db.Text
+  email           String?   @db.VarChar(255)
+  telepon         String?   @db.VarChar(50)
+  alamat          String?   @db.Text
+  maps_embed_url  String?   @db.Text
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("profiles")
+}
+
+model Admin {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String?   @db.Uuid
+  nama_lengkap String    @db.VarChar(255)
+  email        String    @unique @db.VarChar(255)
+  role         String    @default("admin") @db.VarChar(50)
+  foto_url     String?   @db.Text
+  is_active    Boolean   @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  kegiatan     Kegiatan[]
+  agenda       Agenda[]
+  keuangan     Keuangan[]
+
+  @@map("admins")
+}
+
+model Kegiatan {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judul               String    @db.VarChar(255)
+  slug                String    @unique @db.VarChar(255)
+  deskripsi           String    @db.Text
+  tanggal_pelaksanaan DateTime  @db.Date
+  lokasi              String?   @db.VarChar(255)
+  status              String    @default("selesai") @db.VarChar(50)
+  foto_cover          String?   @db.Text
+  foto_galeri         String[]
+  created_by          String?   @db.Uuid
+  admin               Admin?    @relation(fields: [created_by], references: [id])
+  created_at          DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("kegiatan")
+}
+
+model Agenda {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judul           String    @db.VarChar(255)
+  deskripsi       String?   @db.Text
+  tanggal_mulai   DateTime  @db.Timestamptz(6)
+  tanggal_selesai DateTime? @db.Timestamptz(6)
+  lokasi          String?   @db.VarChar(255)
+  status          String    @default("akan_datang") @db.VarChar(50)
+  kategori        String?   @db.VarChar(100)
+  created_by      String?   @db.Uuid
+  admin           Admin?    @relation(fields: [created_by], references: [id])
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("agenda")
+}
+
+model StrukturOrganisasi {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_lengkap String    @db.VarChar(255)
+  jabatan      String    @db.VarChar(255)
+  periode      String    @db.VarChar(50)
+  foto_url     String?   @db.Text
+  no_telepon   String?   @db.VarChar(50)
+  email        String?   @db.VarChar(255)
+  urutan       Int?      @default(0)
+  divisi       String?   @db.VarChar(100)
+  bio          String?   @db.Text
+  is_active    Boolean   @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("struktur_organisasi")
+}
+
+model Keuangan {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tanggal     DateTime  @db.Date
+  tipe        String    @db.VarChar(20)
+  kategori    String    @db.VarChar(100)
+  jumlah      Decimal   @db.Decimal(15, 2)
+  keterangan  String    @db.Text
+  bukti_url   String?   @db.Text
+  created_by  String?   @db.Uuid
+  admin       Admin?    @relation(fields: [created_by], references: [id])
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("keuangan")
+}
+
+model KategoriKeuangan {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama       String    @db.VarChar(100)
+  tipe       String    @db.VarChar(20)
+  is_default Boolean?  @default(false)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+
+  @@map("kategori_keuangan")
+}

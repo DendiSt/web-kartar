@@ -1,6 +1,8 @@
 import { getAdminProfile } from '@/app/actions/pengaturan'
 import PengaturanClient from '@/components/admin/PengaturanClient'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Pengaturan Admin | Tirtajaya 01'
 }

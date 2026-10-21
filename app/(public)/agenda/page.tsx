@@ -41,7 +41,7 @@ export default async function AgendaPublicPage() {
                   <div className="flex items-center justify-between space-x-2 mb-1">
                     <div className="font-bold font-heading">{item.judul}</div>
                     <Badge variant={item.status === 'sedang_berlangsung' ? 'default' : 'outline'}>
-                      {item.status.replace('_', ' ')}
+                      {item.status?.replace('_', ' ') || ''}
                     </Badge>
                   </div>
                   <div className="flex flex-col gap-1 text-sm text-muted-foreground mt-3">

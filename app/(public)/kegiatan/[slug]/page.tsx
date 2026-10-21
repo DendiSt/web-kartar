@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import { Calendar, MapPin, ArrowLeft } from 'lucide-react'
@@ -8,20 +8,19 @@ import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const supabase = await createClient()
-  const { data } = await supabase.from('kegiatan').select('judul').eq('slug', params.slug).single()
+  const data = await prisma.kegiatan.findUnique({
+    where: { slug: params.slug },
+    select: { judul: true }
+  })
   return {
     title: data ? `${data.judul} | Tirtajaya 01` : 'Kegiatan Tidak Ditemukan'
   }
 }
 
 export default async function KegiatanDetailPage({ params }: { params: { slug: string } }) {
-  const supabase = await createClient()
-  const { data: item } = await supabase
-    .from('kegiatan')
-    .select('*')
-    .eq('slug', params.slug)
-    .single()
+  const item = await prisma.kegiatan.findUnique({
+    where: { slug: params.slug }
+  })
 
   if (!item) {
     notFound()
@@ -36,7 +35,7 @@ export default async function KegiatanDetailPage({ params }: { params: { slug: s
       <div className="space-y-4">
         <div className="flex gap-2">
           <Badge variant={item.status === 'selesai' ? 'default' : item.status === 'berlangsung' ? 'secondary' : 'destructive'}>
-            {item.status.replace('_', ' ')}
+            {item.status?.replace('_', ' ') || ''}
           </Badge>
         </div>
         <h1 className="text-4xl font-heading font-bold tracking-tight sm:text-5xl">{item.judul}</h1>

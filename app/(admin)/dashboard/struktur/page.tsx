@@ -1,6 +1,8 @@
 import { getStruktur } from '@/app/actions/struktur'
 import StrukturClient from '@/components/admin/StrukturClient'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = {
   title: 'Struktur Organisasi | Tirtajaya 01'
 }

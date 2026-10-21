@@ -1,115 +1,118 @@
 'use server'
 
+import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function getAgenda() {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('agenda')
-    .select('*')
-    .order('tanggal_mulai', { ascending: true })
-  
-  if (error) {
+  try {
+    const data = await prisma.agenda.findMany({
+      orderBy: { tanggal_mulai: 'asc' }
+    })
+    return data.map((item) => ({
+      ...item,
+      tanggal_mulai: item.tanggal_mulai.toISOString(),
+      tanggal_selesai: item.tanggal_selesai ? item.tanggal_selesai.toISOString() : null
+    }))
+  } catch (error) {
     console.error('Error fetching agenda:', error)
     return []
   }
-  return data
 }
 
 export async function createAgenda(formData: FormData) {
-  const supabase = await createClient()
-  
   const judul = formData.get('judul') as string
   const deskripsi = formData.get('deskripsi') as string
   const tanggal_mulai = formData.get('tanggal_mulai') as string
-  const tanggal_selesai = formData.get('tanggal_selesai') as string || null
+  const tanggal_selesai = (formData.get('tanggal_selesai') as string) || null
   const lokasi = formData.get('lokasi') as string
-  const status = formData.get('status') as string || 'akan_datang'
-  const kategori = formData.get('kategori') as string || null
-  
+  const status = (formData.get('status') as string) || 'akan_datang'
+  const kategori = (formData.get('kategori') as string) || null
+
   if (!judul || !tanggal_mulai) {
     return { error: 'Judul dan tanggal mulai harus diisi' }
   }
 
   // Get current user (admin)
+  const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   let adminId = null
   if (user) {
-    const { data: admin } = await supabase.from('admins').select('id').eq('user_id', user.id).single()
+    const admin = await prisma.admin.findFirst({
+      where: { user_id: user.id }
+    })
     if (admin) adminId = admin.id
   }
 
-  const { error } = await supabase
-    .from('agenda')
-    .insert({
-      judul,
-      deskripsi,
-      tanggal_mulai,
-      tanggal_selesai,
-      lokasi,
-      status,
-      kategori,
-      created_by: adminId
+  try {
+    await prisma.agenda.create({
+      data: {
+        judul,
+        deskripsi,
+        tanggal_mulai: new Date(tanggal_mulai),
+        tanggal_selesai: tanggal_selesai ? new Date(tanggal_selesai) : null,
+        lokasi,
+        status,
+        kategori,
+        created_by: adminId
+      }
     })
 
-  if (error) {
+    revalidatePath('/dashboard/agenda')
+    revalidatePath('/agenda')
+    return { success: true }
+  } catch (error: any) {
     return { error: error.message }
   }
-
-  revalidatePath('/dashboard/agenda')
-  revalidatePath('/agenda')
-  return { success: true }
 }
 
 export async function updateAgenda(formData: FormData) {
-  const supabase = await createClient()
-  
   const id = formData.get('id') as string
   const judul = formData.get('judul') as string
   const deskripsi = formData.get('deskripsi') as string
   const tanggal_mulai = formData.get('tanggal_mulai') as string
-  const tanggal_selesai = formData.get('tanggal_selesai') as string || null
+  const tanggal_selesai = (formData.get('tanggal_selesai') as string) || null
   const lokasi = formData.get('lokasi') as string
-  const status = formData.get('status') as string || 'akan_datang'
-  const kategori = formData.get('kategori') as string || null
-  
+  const status = (formData.get('status') as string) || 'akan_datang'
+  const kategori = (formData.get('kategori') as string) || null
+
   if (!id || !judul || !tanggal_mulai) {
     return { error: 'Judul dan tanggal mulai harus diisi' }
   }
 
-  const { error } = await supabase
-    .from('agenda')
-    .update({
-      judul,
-      deskripsi,
-      tanggal_mulai,
-      tanggal_selesai,
-      lokasi,
-      status,
-      kategori
+  try {
+    await prisma.agenda.update({
+      where: { id },
+      data: {
+        judul,
+        deskripsi,
+        tanggal_mulai: new Date(tanggal_mulai),
+        tanggal_selesai: tanggal_selesai ? new Date(tanggal_selesai) : null,
+        lokasi,
+        status,
+        kategori
+      }
     })
-    .eq('id', id)
 
-  if (error) {
+    revalidatePath('/dashboard/agenda')
+    revalidatePath('/agenda')
+    return { success: true }
+  } catch (error: any) {
     return { error: error.message }
   }
-
-  revalidatePath('/dashboard/agenda')
-  revalidatePath('/agenda')
-  return { success: true }
 }
 
 export async function deleteAgenda(id: string) {
-  const supabase = await createClient()
-  const { error } = await supabase.from('agenda').delete().eq('id', id)
-  
-  if (error) {
+  try {
+    await prisma.agenda.delete({
+      where: { id }
+    })
+
+    revalidatePath('/dashboard/agenda')
+    revalidatePath('/agenda')
+    return { success: true }
+  } catch (error: any) {
     return { error: error.message }
   }
-  
-  revalidatePath('/dashboard/agenda')
-  revalidatePath('/agenda')
-  return { success: true }
 }

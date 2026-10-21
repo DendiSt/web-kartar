@@ -1,26 +1,26 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Calendar, Users, FileText, Image as ImageIcon } from 'lucide-react'
-import { createClient } from '@/lib/supabase/server'
+import { prisma } from '@/lib/prisma'
 import { getSaldoKas, getKeuangan } from '@/app/actions/keuangan'
 import { KeuanganChart } from '@/components/admin/KeuanganChart'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata = {
   title: 'Dashboard Admin | Tirtajaya 01'
 }
 
 export default async function DashboardOverview() {
-  const supabase = await createClient()
-
   const [
-    { count: countKegiatan },
-    { count: countAgenda },
-    { count: countPengurus },
+    countKegiatan,
+    countAgenda,
+    countPengurus,
     saldoKas,
     dataKeuangan
   ] = await Promise.all([
-    supabase.from('kegiatan').select('*', { count: 'exact', head: true }),
-    supabase.from('agenda').select('*', { count: 'exact', head: true }).eq('status', 'akan_datang'),
-    supabase.from('struktur_organisasi').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    prisma.kegiatan.count(),
+    prisma.agenda.count({ where: { status: 'akan_datang' } }),
+    prisma.strukturOrganisasi.count({ where: { is_active: true } }),
     getSaldoKas(),
     getKeuangan()
   ])
