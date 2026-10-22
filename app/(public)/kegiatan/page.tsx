@@ -10,6 +10,8 @@ export const metadata = {
   title: 'Kegiatan | Tirtajaya 01'
 }
 
+export const revalidate = 60
+
 export default async function KegiatanPublicPage() {
   const data = await getKegiatan()
 

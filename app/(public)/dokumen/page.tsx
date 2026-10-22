@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Pusat unduhan berkas resmi organisasi Karang Taruna Tirtajaya 01, meliputi SK Pengurus, AD/ART, Proposal, dan Laporan Pertanggungjawaban (LPJ).',
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export default async function DokumenPage() {
   const data = await getDokumenList({ isPublicOnly: true })

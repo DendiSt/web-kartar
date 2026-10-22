@@ -7,6 +7,8 @@ export const metadata = {
   title: 'Struktur Organisasi | Tirtajaya 01'
 }
 
+export const revalidate = 60
+
 export default async function StrukturPublicPage() {
   const data = await getStruktur()
   

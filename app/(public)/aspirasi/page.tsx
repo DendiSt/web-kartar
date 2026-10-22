@@ -1,7 +1,7 @@
 import { getPublicAspirasiList } from '@/app/actions/aspirasi'
 import AspirasiClient from '@/components/public/AspirasiClient'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 30
 
 export const metadata = {
   title: 'Buku Tamu & Kotak Aspirasi | Karang Taruna Tirtajaya 01',

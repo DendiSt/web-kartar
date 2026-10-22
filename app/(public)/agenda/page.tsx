@@ -2,7 +2,7 @@ import { getAgenda } from '@/app/actions/agenda'
 import AgendaCalendarClient from '@/components/public/AgendaCalendarClient'
 import { Calendar } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata = {
   title: 'Kalender & Jadwal Agenda | Karang Taruna Tirtajaya 01',

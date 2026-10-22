@@ -2,6 +2,21 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Rute yang membutuhkan verifikasi sesi Supabase
+  const isDashboardRoute = pathname.startsWith('/dashboard')
+  const isLoginRoute = pathname.startsWith('/login')
+  const isAdminRoute = pathname === '/admin' || pathname === '/admin/'
+
+  // Untuk semua rute publik (/, /berita, /agenda, /galeri, dll.), bypass middleware langsung
+  // Ini menghindari pemanggilan jaringan ke Supabase Auth pada setiap navigasi dan prefetch link publik
+  if (!isDashboardRoute && !isLoginRoute && !isAdminRoute) {
+    return NextResponse.next({
+      request,
+    })
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })

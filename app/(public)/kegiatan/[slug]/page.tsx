@@ -18,6 +18,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+export const revalidate = 60
+
 export default async function KegiatanDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const item = await prisma.kegiatan.findUnique({

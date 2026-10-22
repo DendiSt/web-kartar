@@ -12,6 +12,8 @@ import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
 import type { Kegiatan, Berita } from '@prisma/client'
 
+export const revalidate = 60
+
 export default async function Home() {
   const [latestKegiatan, latestBerita, countPengurus, countProgram, saldoKas] = await Promise.all([
     prisma.kegiatan.findMany({

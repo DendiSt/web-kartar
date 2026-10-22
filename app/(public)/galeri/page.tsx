@@ -2,7 +2,7 @@ import { getGaleriList, getGaleriAlbums } from '@/app/actions/galeri'
 import GaleriListClient from '@/components/public/GaleriListClient'
 import { Camera } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
 
 export const metadata = {
   title: 'Galeri Foto & Dokumentasi | Karang Taruna Tirtajaya 01',

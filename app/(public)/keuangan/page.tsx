@@ -9,6 +9,8 @@ export const metadata = {
   title: 'Transparansi Keuangan | Tirtajaya 01'
 }
 
+export const revalidate = 60
+
 export default async function KeuanganPublicPage() {
   const data = await getKeuangan()
   const saldoKas = await getSaldoKas()
