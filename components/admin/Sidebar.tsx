@@ -41,14 +41,14 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full w-full flex-col bg-background px-4 py-6 select-none overflow-hidden overscroll-contain">
-      {/* Header Logo & Brand (Terkunci di atas) */}
+    <div className="flex h-full w-full flex-col bg-background px-4 py-6 select-none overflow-hidden overscroll-contain transition-colors duration-400">
+      {/* Header Logo & Brand */}
       <div className="flex items-center gap-3 px-2 mb-6 shrink-0">
         <img src="/images/logo.png" alt="Logo" className="h-8 w-auto object-contain" />
         <span className="font-heading font-bold text-lg text-primary tracking-tight">Admin Panel</span>
       </div>
       
-      {/* Navigation List: Scroll mandiri terisolasi jika layar pendek, overscroll-contain agar tidak tembus ke konten utama */}
+      {/* Navigation List: Scroll mandiri jika layar pendek, overscroll-contain agar tidak tembus ke konten utama */}
       <nav className="flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
         {sidebarLinks.map((link) => {
           const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/dashboard')
@@ -57,7 +57,7 @@ export default function Sidebar() {
               key={link.name}
               href={link.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300",
                 isActive 
                   ? "bg-primary text-primary-foreground font-semibold shadow-xs" 
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -70,8 +70,8 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Footer Area: Mode Tampilan & Tombol Keluar (Terkunci di bawah) */}
-      <div className="pt-4 border-t border-border mt-auto space-y-3 shrink-0">
+      {/* Footer Area: Mode Tampilan & Tombol Keluar */}
+      <div className="pt-4 border-t border-border/60 mt-auto space-y-3 shrink-0 transition-colors duration-400">
         <div className="flex items-center justify-between px-2">
           <span className="text-xs font-medium text-muted-foreground">Mode Tampilan</span>
           <ThemeToggle />
@@ -80,7 +80,7 @@ export default function Sidebar() {
           <Button 
             variant="ghost" 
             type="submit" 
-            className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg text-sm"
+            className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg text-sm transition-colors duration-300"
           >
             <LogOut className="mr-2 h-4 w-4 shrink-0" />
             Keluar
