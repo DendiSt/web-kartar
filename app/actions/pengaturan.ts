@@ -46,8 +46,8 @@ export async function updateAdminProfile(formData: FormData) {
     revalidatePath('/dashboard/pengaturan')
     revalidatePath('/dashboard')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 

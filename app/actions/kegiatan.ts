@@ -85,8 +85,8 @@ export async function createKegiatan(formData: FormData) {
     revalidatePath('/kegiatan')
     revalidatePath('/')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 
@@ -141,8 +141,8 @@ export async function updateKegiatan(formData: FormData) {
     revalidatePath('/kegiatan')
     revalidatePath('/')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 
@@ -155,7 +155,7 @@ export async function deleteKegiatan(id: string) {
     revalidatePath('/dashboard/kegiatan')
     revalidatePath('/kegiatan')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }

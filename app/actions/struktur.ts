@@ -48,8 +48,8 @@ export async function createStruktur(formData: FormData) {
     revalidatePath('/dashboard/struktur')
     revalidatePath('/struktur')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 
@@ -88,8 +88,8 @@ export async function updateStruktur(formData: FormData) {
     revalidatePath('/dashboard/struktur')
     revalidatePath('/struktur')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 
@@ -102,7 +102,7 @@ export async function deleteStruktur(id: string) {
     revalidatePath('/dashboard/struktur')
     revalidatePath('/struktur')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }

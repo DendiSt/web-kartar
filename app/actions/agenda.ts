@@ -62,8 +62,8 @@ export async function createAgenda(formData: FormData) {
     revalidatePath('/dashboard/agenda')
     revalidatePath('/agenda')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 
@@ -98,8 +98,8 @@ export async function updateAgenda(formData: FormData) {
     revalidatePath('/dashboard/agenda')
     revalidatePath('/agenda')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 
@@ -112,7 +112,7 @@ export async function deleteAgenda(id: string) {
     revalidatePath('/dashboard/agenda')
     revalidatePath('/agenda')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }

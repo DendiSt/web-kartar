@@ -89,8 +89,8 @@ export async function createKeuangan(formData: FormData) {
     revalidatePath('/keuangan')
     revalidatePath('/dashboard')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 
@@ -124,8 +124,8 @@ export async function updateKeuangan(formData: FormData) {
     revalidatePath('/keuangan')
     revalidatePath('/dashboard')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }
 
@@ -139,7 +139,7 @@ export async function deleteKeuangan(id: string) {
     revalidatePath('/keuangan')
     revalidatePath('/dashboard')
     return { success: true }
-  } catch (error: any) {
-    return { error: error.message }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Terjadi kesalahan' }
   }
 }

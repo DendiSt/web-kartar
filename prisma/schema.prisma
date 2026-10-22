@@ -44,6 +44,10 @@ model Admin {
   kegiatan     Kegiatan[]
   agenda       Agenda[]
   keuangan     Keuangan[]
+  berita       Berita[]
+  dokumen      Dokumen[]
+  galeri       Galeri[]
+  anggota      Anggota[]
 
   @@map("admins")
 }
@@ -126,3 +130,101 @@ model KategoriKeuangan {
 
   @@map("kategori_keuangan")
 }
+
+model Berita {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judul           String    @db.VarChar(255)
+  slug            String    @unique @db.VarChar(255)
+  ringkasan       String?   @db.Text
+  konten          String    @db.Text
+  kategori        String    @default("pengumuman") @db.VarChar(50)
+  status          String    @default("published") @db.VarChar(50)
+  foto_cover      String?   @db.Text
+  penulis         String?   @default("Admin") @db.VarChar(100)
+  is_pinned       Boolean   @default(false)
+  views           Int       @default(0)
+  created_by      String?   @db.Uuid
+  admin           Admin?    @relation(fields: [created_by], references: [id])
+  created_at      DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("berita")
+}
+
+model Dokumen {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judul        String    @db.VarChar(255)
+  nomor_surat  String?   @db.VarChar(100)
+  kategori     String    @default("sk") @db.VarChar(50)
+  deskripsi    String?   @db.Text
+  file_url     String    @db.Text
+  file_name    String?   @db.VarChar(255)
+  file_size    String?   @db.VarChar(50)
+  file_type    String?   @default("pdf") @db.VarChar(20)
+  tahun        Int?      @default(2026)
+  downloads    Int       @default(0)
+  is_public    Boolean   @default(true)
+  created_by   String?   @db.Uuid
+  admin        Admin?    @relation(fields: [created_by], references: [id])
+  created_at   DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("dokumen")
+}
+
+model Galeri {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judul       String    @db.VarChar(255)
+  album       String    @default("Umum") @db.VarChar(100)
+  kategori    String    @default("kegiatan") @db.VarChar(50)
+  foto_url    String    @db.Text
+  deskripsi   String?   @db.Text
+  tanggal     DateTime? @default(now()) @db.Date
+  created_by  String?   @db.Uuid
+  admin       Admin?    @relation(fields: [created_by], references: [id])
+  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("galeri")
+}
+
+model Anggota {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama          String    @db.VarChar(255)
+  nik           String?   @db.VarChar(50)
+  jenis_kelamin String    @default("L") @db.VarChar(10)
+  tempat_lahir  String?   @db.VarChar(100)
+  tanggal_lahir DateTime? @db.Date
+  no_hp         String?   @db.VarChar(50)
+  email         String?   @db.VarChar(255)
+  alamat        String?   @db.Text
+  rt            String    @default("01") @db.VarChar(10)
+  rw            String    @default("01") @db.VarChar(10)
+  dusun         String    @default("Sumurgintung") @db.VarChar(100)
+  status        String    @default("Aktif") @db.VarChar(50)
+  jabatan       String?   @default("Anggota") @db.VarChar(100)
+  minat_bakat   String?   @db.VarChar(255)
+  foto_url      String?   @db.Text
+  created_by    String?   @db.Uuid
+  admin         Admin?    @relation(fields: [created_by], references: [id])
+  created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("anggota")
+}
+
+model Aspirasi {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama       String    @db.VarChar(255)
+  kontak     String?   @db.VarChar(100)
+  kategori   String    @default("aspirasi") @db.VarChar(50)
+  pesan      String    @db.Text
+  status     String    @default("PENDING") @db.VarChar(20)
+  tanggapan  String?   @db.Text
+  is_anonim  Boolean   @default(false)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at DateTime? @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@map("aspirasi")
+}
+

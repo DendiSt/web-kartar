@@ -1,4 +1,3 @@
-import Image from 'next/image'
 
 export const metadata = {
   title: 'Tentang Kami | Tirtajaya 01'
@@ -25,7 +24,7 @@ export default function TentangPage() {
         <div className="space-y-6">
           <h2 className="text-3xl font-bold font-heading">Sejarah Kami</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Karang Taruna "Tirtajaya 01" didirikan sebagai wadah pengembangan generasi muda non-partisan yang tumbuh atas dasar kesadaran dan rasa tanggung jawab sosial dari, oleh, dan untuk masyarakat khususnya generasi muda di wilayah dusun kami.
+            Karang Taruna &ldquo;Tirtajaya 01&rdquo; didirikan sebagai wadah pengembangan generasi muda non-partisan yang tumbuh atas dasar kesadaran dan rasa tanggung jawab sosial dari, oleh, dan untuk masyarakat khususnya generasi muda di wilayah dusun kami.
           </p>
           <p className="text-muted-foreground leading-relaxed">
             Sejak awal berdirinya, kami terus berkomitmen untuk menyelenggarakan berbagai kegiatan positif di bidang sosial, keagamaan, olahraga, dan seni budaya demi mempererat tali persaudaraan antar warga.

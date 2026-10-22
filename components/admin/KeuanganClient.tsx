@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,12 +14,23 @@ import { createKeuangan, updateKeuangan, deleteKeuangan } from '@/app/actions/ke
 import { ImageUploader } from './ImageUploader'
 import { Card, CardContent } from '@/components/ui/card'
 
-export default function KeuanganClient({ data, saldo }: { data: any[], saldo: number }) {
+export interface KeuanganItem {
+  id: string
+  tanggal: string | Date
+  tipe: string
+  kategori: string
+  jumlah: number
+  keterangan: string
+  bukti_url?: string | null
+  created_by?: string | null
+}
+
+export default function KeuanganClient({ data, saldo }: { data: KeuanganItem[], saldo: number }) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   
   // Edit State
-  const [editItem, setEditItem] = useState<any>(null)
+  const [editItem, setEditItem] = useState<KeuanganItem | null>(null)
   const [buktiUrl, setBuktiUrl] = useState('')
   
   // Delete State
@@ -31,7 +42,7 @@ export default function KeuanganClient({ data, saldo }: { data: any[], saldo: nu
     setIsOpen(true)
   }
 
-  function openEdit(item: any) {
+  function openEdit(item: KeuanganItem) {
     setEditItem(item)
     setBuktiUrl(item.bukti_url || '')
     setIsOpen(true)
@@ -96,7 +107,7 @@ export default function KeuanganClient({ data, saldo }: { data: any[], saldo: nu
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="tanggal">Tanggal Transaksi</Label>
-                <Input id="tanggal" name="tanggal" type="date" required defaultValue={editItem ? editItem.tanggal.split('T')[0] : ''} />
+                <Input id="tanggal" name="tanggal" type="date" required defaultValue={editItem ? new Date(editItem.tanggal).toISOString().split('T')[0] : ''} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="tipe">Tipe Transaksi</Label>
@@ -104,10 +115,10 @@ export default function KeuanganClient({ data, saldo }: { data: any[], saldo: nu
                   id="tipe" 
                   name="tipe" 
                   defaultValue={editItem?.tipe || 'pemasukan'}
-                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background dark:bg-[#181b20] text-foreground dark:text-white dark:border-[#292a2e] px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value="pemasukan">Pemasukan (+)</option>
-                  <option value="pengeluaran">Pengeluaran (-)</option>
+                  <option value="pemasukan" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Pemasukan (+)</option>
+                  <option value="pengeluaran" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Pengeluaran (-)</option>
                 </select>
               </div>
             </div>

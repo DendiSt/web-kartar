@@ -199,3 +199,22 @@
 .confetti-gradient {
   background: conic-gradient(rgb(191, 99, 243) 170deg, rgb(252, 167, 0) 171deg, rgb(252, 167, 0) 230deg, rgb(77, 140, 237) 231deg, rgb(77, 140, 237) 360deg);
 }
+
+/* Native select & option dark mode fix */
+select {
+  color-scheme: light;
+}
+
+.dark select {
+  color-scheme: dark;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #101214;
+}
+
+.dark select option {
+  background-color: #181b20 !important;
+  color: #ffffff !important;
+}

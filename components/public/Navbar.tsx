@@ -10,11 +10,15 @@ import { ThemeToggle } from "@/components/ThemeToggle"
 
 const navLinks = [
   { href: "/", label: "Beranda" },
+  { href: "/berita", label: "Berita" },
   { href: "/kegiatan", label: "Kegiatan" },
+  { href: "/galeri", label: "Galeri" },
   { href: "/agenda", label: "Agenda" },
+  { href: "/dokumen", label: "Dokumen" },
+  { href: "/aspirasi", label: "Aspirasi" },
   { href: "/struktur", label: "Pengurus" },
   { href: "/keuangan", label: "Transparansi" },
-  { href: "/tentang", label: "Tentang Kami" },
+  { href: "/tentang", label: "Tentang" },
   { href: "/kontak", label: "Kontak" },
 ]
 

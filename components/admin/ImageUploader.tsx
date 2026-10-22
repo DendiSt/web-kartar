@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Loader2, UploadCloud, X, Link as LinkIcon, Image as ImageIcon } from 'lucide-react'
+import { Loader2, UploadCloud, X, Link as LinkIcon } from 'lucide-react'
 
 interface ImageUploaderProps {
   bucket?: string
@@ -28,10 +27,12 @@ export function ImageUploader({
   const [customUrl, setCustomUrl] = useState('')
   const supabase = createClient()
 
-  useEffect(() => {
+  const [prevDefault, setPrevDefault] = useState(defaultImage)
+  if (defaultImage !== prevDefault) {
+    setPrevDefault(defaultImage)
     setPreview(defaultImage || null)
     setCustomUrl(defaultImage || '')
-  }, [defaultImage])
+  }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -50,7 +51,7 @@ export function ImageUploader({
       const filePath = `${folder}/${fileName}`
 
       // 2. Upload to Supabase Storage
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from(bucket)
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -71,13 +72,13 @@ export function ImageUploader({
       setCustomUrl(publicUrl)
       onUploadSuccess(publicUrl)
       
-    } catch (error: any) {
+    } catch (error) {
       console.error('Upload Error:', error)
-      // If error uploading (e.g. storage bucket policy or network), let user know
+      const err = error instanceof Error ? error : new Error(String(error))
       if (onUploadError) {
-        onUploadError(error)
+        onUploadError(err)
       } else {
-        alert('Gagal mengunggah gambar ke cloud storage: ' + (error.message || error))
+        alert('Gagal mengunggah gambar ke cloud storage: ' + err.message)
       }
       setPreview(defaultImage || null)
     } finally {

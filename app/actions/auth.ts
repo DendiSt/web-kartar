@@ -6,7 +6,7 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 export async function login(formData: FormData) {
-  let identifier = (formData.get('email') as string || formData.get('username') as string || '').trim().toLowerCase()
+  const identifier = (formData.get('email') as string || formData.get('username') as string || '').trim().toLowerCase()
   const password = formData.get('password') as string
 
   if (!identifier || !password) {

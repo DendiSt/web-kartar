@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,12 +13,28 @@ import { createStruktur, updateStruktur, deleteStruktur } from '@/app/actions/st
 import { ImageUploader } from './ImageUploader'
 import Image from 'next/image'
 
-export default function StrukturClient({ data }: { data: any[] }) {
+export interface StrukturItem {
+  id: string
+  nama_lengkap: string
+  jabatan: string
+  periode: string
+  divisi?: string | null
+  urutan?: number | null
+  foto_url?: string | null
+  no_telepon?: string | null
+  email?: string | null
+  is_active: boolean
+  bio?: string | null
+  created_at?: Date | string | null
+  updated_at?: Date | string | null
+}
+
+export default function StrukturClient({ data }: { data: StrukturItem[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   
   // Edit State
-  const [editItem, setEditItem] = useState<any>(null)
+  const [editItem, setEditItem] = useState<StrukturItem | null>(null)
   const [fotoUrl, setFotoUrl] = useState('')
   
   // Delete State
@@ -30,7 +46,7 @@ export default function StrukturClient({ data }: { data: any[] }) {
     setIsOpen(true)
   }
 
-  function openEdit(item: any) {
+  function openEdit(item: StrukturItem) {
     setEditItem(item)
     setFotoUrl(item.foto_url || '')
     setIsOpen(true)
@@ -138,10 +154,10 @@ export default function StrukturClient({ data }: { data: any[] }) {
                   id="is_active" 
                   name="is_active" 
                   defaultValue={editItem ? String(editItem.is_active) : 'true'}
-                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background dark:bg-[#181b20] text-foreground dark:text-white dark:border-[#292a2e] px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value="true">Aktif</option>
-                  <option value="false">Tidak Aktif</option>
+                  <option value="true" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Aktif</option>
+                  <option value="false" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Tidak Aktif</option>
                 </select>
               </div>
             </div>

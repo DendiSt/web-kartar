@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Users, CalendarCheck, Wallet } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 
 export default function StatsSection({
   anggotaAktif = 0,

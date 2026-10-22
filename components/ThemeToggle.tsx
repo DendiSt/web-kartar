@@ -8,12 +8,11 @@ import { Button } from '@/components/ui/button'
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  // Ensure hydration mismatch doesn't occur by only rendering the toggle after mounting
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  )
 
   if (!mounted) {
     // Return a dummy button with the same dimensions to avoid layout shift

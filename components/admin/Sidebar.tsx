@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Calendar, Users, FileText, Settings, LogOut, Image as ImageIcon } from 'lucide-react'
+import { LayoutDashboard, Calendar, Users, FileText, Settings, LogOut, Image as ImageIcon, Newspaper, FolderArchive, Camera, UserCheck, MessageSquare, Printer } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { logout } from '@/app/actions/auth'
@@ -10,10 +10,16 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 
 const sidebarLinks = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Berita & Info', href: '/dashboard/berita', icon: Newspaper },
+  { name: 'Dokumen & Arsip', href: '/dashboard/dokumen', icon: FolderArchive },
   { name: 'Kegiatan', href: '/dashboard/kegiatan', icon: ImageIcon },
+  { name: 'Galeri Foto', href: '/dashboard/galeri', icon: Camera },
   { name: 'Agenda', href: '/dashboard/agenda', icon: Calendar },
+  { name: 'Data Anggota', href: '/dashboard/anggota', icon: UserCheck },
+  { name: 'Aspirasi Warga', href: '/dashboard/aspirasi', icon: MessageSquare },
   { name: 'Pengurus', href: '/dashboard/struktur', icon: Users },
   { name: 'Keuangan', href: '/dashboard/keuangan', icon: FileText },
+  { name: 'Pusat Laporan', href: '/dashboard/laporan', icon: Printer },
   { name: 'Pengaturan', href: '/dashboard/pengaturan', icon: Settings },
 ]
 

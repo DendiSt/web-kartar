@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Loader2, UploadCloud, X, Link as LinkIcon, Image as ImageIcon, Star, Plus, Check } from 'lucide-react'
+import { Loader2, UploadCloud, X, Link as LinkIcon, Star, Plus } from 'lucide-react'
 
 interface MultiImageUploaderProps {
   bucket?: string
@@ -81,9 +81,10 @@ export function MultiImageUploader({
       if (newUploadedUrls.length > 0) {
         onChange([...images, ...newUploadedUrls])
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Batch Upload Error:', error)
-      alert('Terjadi kesalahan saat mengunggah: ' + (error.message || error))
+      const msg = error instanceof Error ? error.message : 'Terjadi kesalahan sistem'
+      alert('Terjadi kesalahan saat mengunggah: ' + msg)
     } finally {
       setIsUploading(false)
       setUploadProgress('')

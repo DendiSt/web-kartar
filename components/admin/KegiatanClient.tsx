@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,12 +14,24 @@ import { id as localeID } from 'date-fns/locale/id'
 import { createKegiatan, updateKegiatan, deleteKegiatan } from '@/app/actions/kegiatan'
 import { MultiImageUploader } from '@/components/admin/MultiImageUploader'
 
-export default function KegiatanClient({ data }: { data: any[] }) {
+export interface KegiatanItem {
+  id: string
+  judul: string
+  deskripsi: string
+  tanggal_pelaksanaan: string
+  lokasi: string | null
+  status: string
+  foto_cover: string | null
+  foto_galeri: string[]
+  created_by?: string | null
+}
+
+export default function KegiatanClient({ data }: { data: KegiatanItem[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   
   // Edit State
-  const [editItem, setEditItem] = useState<any>(null)
+  const [editItem, setEditItem] = useState<KegiatanItem | null>(null)
   const [fotoList, setFotoList] = useState<string[]>([])
   
   // Delete State
@@ -31,7 +43,7 @@ export default function KegiatanClient({ data }: { data: any[] }) {
     setIsOpen(true)
   }
 
-  function openEdit(item: any) {
+  function openEdit(item: KegiatanItem) {
     setEditItem(item)
     const initialList: string[] = []
     if (item.foto_cover) initialList.push(item.foto_cover)
@@ -110,7 +122,7 @@ export default function KegiatanClient({ data }: { data: any[] }) {
                 onChange={setFotoList} 
               />
               <p className="text-[11px] text-muted-foreground">
-                Foto pertama otomatis menjadi cover utama di kartu kegiatan & beranda. Anda dapat mengubah cover dengan klik "Jadikan Cover".
+                Foto pertama otomatis menjadi cover utama di kartu kegiatan &amp; beranda. Anda dapat mengubah cover dengan klik &quot;Jadikan Cover&quot;.
               </p>
             </div>
 
@@ -136,11 +148,11 @@ export default function KegiatanClient({ data }: { data: any[] }) {
                   id="status" 
                   name="status" 
                   defaultValue={editItem?.status || 'selesai'}
-                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background dark:bg-[#181b20] text-foreground dark:text-white dark:border-[#292a2e] px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value="selesai">Selesai</option>
-                  <option value="berlangsung">Sedang Berlangsung</option>
-                  <option value="dibatalkan">Dibatalkan</option>
+                  <option value="selesai" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Selesai</option>
+                  <option value="berlangsung" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Sedang Berlangsung</option>
+                  <option value="dibatalkan" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Dibatalkan</option>
                 </select>
               </div>
             </div>

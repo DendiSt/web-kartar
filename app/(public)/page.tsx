@@ -7,15 +7,23 @@ import { Badge } from '@/components/ui/badge'
 import { prisma } from '@/lib/prisma'
 import { getSaldoKas } from '@/app/actions/keuangan'
 import Image from 'next/image'
-import { Calendar, ArrowRight, HeartHandshake, Compass, Users, Camera } from 'lucide-react'
+import { Calendar, ArrowRight, Camera, Newspaper, Pin } from 'lucide-react'
 import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
-import type { Kegiatan } from '@prisma/client'
+import type { Kegiatan, Berita } from '@prisma/client'
 
 export default async function Home() {
-  const [latestKegiatan, countPengurus, countProgram, saldoKas] = await Promise.all([
+  const [latestKegiatan, latestBerita, countPengurus, countProgram, saldoKas] = await Promise.all([
     prisma.kegiatan.findMany({
       orderBy: { tanggal_pelaksanaan: 'desc' },
+      take: 3
+    }),
+    prisma.berita.findMany({
+      where: { status: 'published' },
+      orderBy: [
+        { is_pinned: 'desc' },
+        { created_at: 'desc' }
+      ],
       take: 3
     }),
     prisma.strukturOrganisasi.count({
@@ -36,6 +44,102 @@ export default async function Home() {
         programSukses={countProgram || 0}
         saldoKas={saldoKas}
       />
+
+      {/* Pengumuman & Berita Terkini Section */}
+      {latestBerita && latestBerita.length > 0 && (
+        <section className="py-16 md:py-20 bg-slate-50/70 dark:bg-[#14161a] border-b border-[#f0f1f2] dark:border-[#292a2e]">
+          <div className="container mx-auto px-4 md:px-6 max-w-[1200px]">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+              <div>
+                <span className="text-xs uppercase tracking-wider font-bold text-[#1868db] bg-[#1868db]/10 px-3 py-1 rounded-full inline-block mb-3">
+                  Informasi Warga
+                </span>
+                <h2 className="font-heading text-2xl sm:text-3xl font-bold text-[#101214] dark:text-white tracking-tight">
+                  Pengumuman & Kabar Terkini
+                </h2>
+                <p className="mt-2 text-[#42526e] dark:text-[#b7b9be] text-sm max-w-xl">
+                  Ikuti informasi resmi, instruksi kegiatan, dan kabar terbaru dari pengurus Karang Taruna Tirtajaya 01.
+                </p>
+              </div>
+
+              <Link href="/berita">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="rounded-full px-5 h-9 text-xs border-[#1868db] text-[#1868db] hover:bg-[#1868db]/10"
+                >
+                  Lihat Semua Berita <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {latestBerita.map((item: Berita) => (
+                <Card 
+                  key={item.id}
+                  className="rounded-[20px] bg-white dark:bg-[#181b20] border border-[#f0f1f2] dark:border-[#292a2e] shadow-[0_0_1px_0_rgba(9,30,66,0.31),0_1px_1px_0_rgba(9,30,66,0.15)] dark:shadow-none p-5 flex flex-col group transition-all hover:translate-y-[-3px]"
+                >
+                  <div className="aspect-[16/10] bg-[#f0f1f2] dark:bg-[#1c2b42] relative overflow-hidden rounded-[8px] mb-4">
+                    {item.foto_cover ? (
+                      <Image 
+                        src={item.foto_cover} 
+                        alt={item.judul} 
+                        fill 
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex flex-col items-center justify-center bg-secondary/50 text-muted-foreground">
+                        <Newspaper className="w-8 h-8 opacity-40 mb-1" />
+                        <span className="text-xs font-medium">Info Dusun</span>
+                      </div>
+                    )}
+
+                    <div className="absolute top-2.5 left-2.5">
+                      <Badge 
+                        variant="outline" 
+                        className="rounded-full text-[11px] font-semibold bg-white/90 dark:bg-black/80 backdrop-blur-md shadow-sm border-none uppercase"
+                      >
+                        {item.kategori.replace('_', ' ')}
+                      </Badge>
+                    </div>
+
+                    {item.is_pinned && (
+                      <div className="absolute top-2.5 right-2.5 bg-amber-500 text-white p-1 rounded-full shadow-sm" title="Disematkan">
+                        <Pin className="w-3.5 h-3.5 fill-white" />
+                      </div>
+                    )}
+                  </div>
+
+                  <CardHeader className="p-0 pb-2">
+                    <CardTitle className="font-heading text-base font-bold line-clamp-2 text-[#101214] dark:text-white leading-snug">
+                      <Link href={`/berita/${item.slug}`} className="hover:text-[#1868db] transition-colors">
+                        {item.judul}
+                      </Link>
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-2 mt-1 text-xs text-[#42526e] dark:text-[#b7b9be]">
+                      <Calendar className="h-3 w-3 text-[#1868db]" />
+                      {item.created_at ? format(new Date(item.created_at), 'dd MMMM yyyy', { locale: localeID }) : '-'}
+                    </CardDescription>
+                  </CardHeader>
+
+                  <CardContent className="p-0 pt-1 flex-1">
+                    <p className="text-xs sm:text-sm text-[#42526e] dark:text-[#b7b9be] line-clamp-3 leading-relaxed">
+                      {item.ringkasan || item.konten}
+                    </p>
+                  </CardContent>
+
+                  <div className="pt-3 mt-4 border-t border-[#f0f1f2] dark:border-[#292a2e]">
+                    <Link href={`/berita/${item.slug}`} className="inline-flex items-center text-xs font-semibold text-[#1868db] hover:underline">
+                      Baca Selengkapnya <ArrowRight className="ml-1 h-3 w-3" />
+                    </Link>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
       
       {/* Kegiatan Terbaru Section */}
       <section className="py-20 md:py-24 bg-white dark:bg-[#101214]">

@@ -4,7 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts'
 import { useMemo } from 'react'
 
-export function KeuanganChart({ data }: { data: any[] }) {
+export interface KeuanganChartItem {
+  tanggal: string | Date
+  tipe: string
+  jumlah: number
+}
+
+export function KeuanganChart({ data }: { data: KeuanganChartItem[] }) {
   // Aggregate data by month (simple version)
   const chartData = useMemo(() => {
     const monthlyData: Record<string, { name: string, Pemasukan: number, Pengeluaran: number }> = {}
@@ -48,7 +54,7 @@ export function KeuanganChart({ data }: { data: any[] }) {
             <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
             <YAxis tickFormatter={formatRupiah} fontSize={12} tickLine={false} axisLine={false} />
             <Tooltip 
-              formatter={(value: any) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value || 0)}
+              formatter={(value: unknown) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Number(value) || 0)}
               cursor={{ fill: 'transparent' }}
             />
             <Legend wrapperStyle={{ paddingTop: '20px' }} />

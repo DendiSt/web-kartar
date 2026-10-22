@@ -105,7 +105,7 @@ export default function HeroSection() {
                 </div>
 
                 <p className="text-sm text-white/90 leading-relaxed">
-                  "Menumbuhkan solidaritas pemuda yang mandiri, bermartabat, dan bermanfaat bagi kemajuan sosial dan ekonomi warga dusun."
+                  &ldquo;Menumbuhkan solidaritas pemuda yang mandiri, bermartabat, dan bermanfaat bagi kemajuan sosial dan ekonomi warga dusun.&rdquo;
                 </p>
 
                 <div className="grid grid-cols-2 gap-3 pt-2">

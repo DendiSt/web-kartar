@@ -9,7 +9,19 @@ import { ImageUploader } from './ImageUploader'
 import { updateAdminProfile, updatePassword } from '@/app/actions/pengaturan'
 import { User, Lock, Eye, EyeOff, Save, Loader2 } from 'lucide-react'
 
-export default function PengaturanClient({ profile }: { profile: any }) {
+export interface AdminProfile {
+  id?: string
+  user_id?: string | null
+  nama_lengkap?: string | null
+  email?: string | null
+  role?: string | null
+  foto_url?: string | null
+  is_active?: boolean
+  created_at?: Date | string | null
+  updated_at?: Date | string | null
+}
+
+export default function PengaturanClient({ profile }: { profile: AdminProfile | null }) {
   const [activeTab, setActiveTab] = useState<'profil' | 'keamanan'>('profil')
   
   // Profile State

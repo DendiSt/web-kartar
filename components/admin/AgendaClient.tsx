@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,12 +13,24 @@ import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
 import { createAgenda, updateAgenda, deleteAgenda } from '@/app/actions/agenda'
 
-export default function AgendaClient({ data }: { data: any[] }) {
+export interface AgendaItem {
+  id: string
+  judul: string
+  deskripsi: string | null
+  tanggal_mulai: string
+  tanggal_selesai: string | null
+  lokasi: string | null
+  status: string
+  kategori: string | null
+  created_by?: string | null
+}
+
+export default function AgendaClient({ data }: { data: AgendaItem[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   
   // Edit State
-  const [editItem, setEditItem] = useState<any>(null)
+  const [editItem, setEditItem] = useState<AgendaItem | null>(null)
   
   // Delete State
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -28,7 +40,7 @@ export default function AgendaClient({ data }: { data: any[] }) {
     setIsOpen(true)
   }
 
-  function openEdit(item: any) {
+  function openEdit(item: AgendaItem) {
     setEditItem(item)
     setIsOpen(true)
   }
@@ -115,12 +127,12 @@ export default function AgendaClient({ data }: { data: any[] }) {
                   id="status" 
                   name="status" 
                   defaultValue={editItem?.status || 'akan_datang'}
-                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-background dark:bg-[#181b20] text-foreground dark:text-white dark:border-[#292a2e] px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <option value="akan_datang">Akan Datang</option>
-                  <option value="sedang_berlangsung">Sedang Berlangsung</option>
-                  <option value="selesai">Selesai</option>
-                  <option value="dibatalkan">Dibatalkan</option>
+                  <option value="akan_datang" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Akan Datang</option>
+                  <option value="sedang_berlangsung" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Sedang Berlangsung</option>
+                  <option value="selesai" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Selesai</option>
+                  <option value="dibatalkan" className="bg-white dark:bg-[#181b20] text-[#101214] dark:text-white">Dibatalkan</option>
                 </select>
               </div>
               <div className="space-y-2">
