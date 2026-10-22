@@ -6,14 +6,14 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-muted/20">
-      {/* Sidebar Desktop: Fixed secara permanen di sisi kiri viewport */}
-      <aside className="hidden md:block fixed inset-y-0 left-0 z-40 w-64 border-r border-border bg-background shadow-xs">
+    <div className="flex h-screen w-full overflow-hidden bg-muted/20">
+      {/* Sidebar Desktop: Scroll container terisolasi 100%, overscroll-contain mencegah scroll bocor ke konten */}
+      <aside className="hidden md:flex h-full w-64 shrink-0 flex-col border-r border-border bg-background shadow-xs overflow-hidden overscroll-contain select-none">
         <Sidebar />
       </aside>
 
-      {/* Konten Utama: Tergeser selebar sidebar dan mengalir bebas tanpa membuat sidebar bergeser */}
-      <main className="flex-1 md:pl-64 flex flex-col min-h-screen min-w-0">
+      {/* Konten Utama: Scroll container mandiri 100%, terpisah dari sidebar */}
+      <main className="flex-1 h-full overflow-y-auto overscroll-contain flex flex-col min-w-0">
         <div className="flex-1 p-4 md:p-8">
           {children}
         </div>

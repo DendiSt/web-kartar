@@ -41,15 +41,15 @@ export default function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="flex h-full w-full flex-col bg-background px-4 py-6 select-none">
-      {/* Header Logo & Brand */}
+    <div className="flex h-full w-full flex-col bg-background px-4 py-6 select-none overflow-hidden overscroll-contain">
+      {/* Header Logo & Brand (Terkunci di atas) */}
       <div className="flex items-center gap-3 px-2 mb-6 shrink-0">
         <img src="/images/logo.png" alt="Logo" className="h-8 w-auto object-contain" />
         <span className="font-heading font-bold text-lg text-primary tracking-tight">Admin Panel</span>
       </div>
       
-      {/* Navigation List (Scrollable independen jika tinggi layar laptop kecil) */}
-      <nav className="flex-1 space-y-1 overflow-y-auto pr-1">
+      {/* Navigation List: Scroll mandiri terisolasi jika layar pendek, overscroll-contain agar tidak tembus ke konten utama */}
+      <nav className="flex-1 space-y-1 overflow-y-auto overscroll-contain pr-1">
         {sidebarLinks.map((link) => {
           const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/dashboard')
           return (
@@ -70,7 +70,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Footer Area: Mode Tampilan & Tombol Keluar (Tetap Terkunci di Bawah) */}
+      {/* Footer Area: Mode Tampilan & Tombol Keluar (Terkunci di bawah) */}
       <div className="pt-4 border-t border-border mt-auto space-y-3 shrink-0">
         <div className="flex items-center justify-between px-2">
           <span className="text-xs font-medium text-muted-foreground">Mode Tampilan</span>
