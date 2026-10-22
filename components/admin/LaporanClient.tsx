@@ -42,6 +42,9 @@ export default function LaporanClient({
   orgInfo
 }: LaporanClientProps) {
   const [activeTab, setActiveTab] = React.useState<'keuangan' | 'kegiatan' | 'anggota'>('keuangan')
+  const [previewMode, setPreviewMode] = React.useState<'theme' | 'paper'>('theme')
+
+  const isPaper = previewMode === 'paper'
 
   // Date formatted for print
   const printDateStr = new Date().toLocaleDateString('id-ID', {
@@ -151,12 +154,26 @@ export default function LaporanClient({
     document.body.removeChild(link)
   }
 
+  // Table styling classes based on preview mode
+  const tableBorder = isPaper ? 'border-gray-900' : 'border-border'
+  const thStyle = isPaper
+    ? 'py-2 px-2 border-r border-gray-900 bg-gray-100 text-gray-900 font-bold'
+    : 'py-2 px-2 border-r border-border bg-muted/70 text-foreground font-bold'
+  const tdStyle = isPaper
+    ? 'py-1.5 px-2 border-r border-gray-300 text-gray-800'
+    : 'py-1.5 px-2 border-r border-border text-foreground'
+  const trStyle = isPaper
+    ? 'border-b border-gray-200 hover:bg-gray-50'
+    : 'border-b border-border/60 hover:bg-muted/30 transition-colors'
+
   return (
     <div className="space-y-6">
-      {/* Tab Navigation (Hidden on Print) */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between print:hidden">
+      {/* Tab Navigation & Mode Toggle (Hidden on Print) */}
+      <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between print:hidden">
+        {/* Report Tab Selector */}
         <div className="inline-flex p-1 rounded-xl bg-muted border space-x-1">
           <button
+            type="button"
             onClick={() => setActiveTab('keuangan')}
             className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${
               activeTab === 'keuangan'
@@ -168,6 +185,7 @@ export default function LaporanClient({
             Laporan Keuangan
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('kegiatan')}
             className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${
               activeTab === 'kegiatan'
@@ -179,6 +197,7 @@ export default function LaporanClient({
             Rekap Kegiatan
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('anggota')}
             className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-2 ${
               activeTab === 'anggota'
@@ -191,8 +210,35 @@ export default function LaporanClient({
           </button>
         </div>
 
-        {/* Global Action Buttons */}
-        <div className="flex items-center gap-2">
+        {/* Preview Mode Selector & Export Actions */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Mode Pratinjau Toggle */}
+          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg border text-xs">
+            <span className="text-muted-foreground px-1.5 font-medium hidden sm:inline">Pratinjau:</span>
+            <button
+              type="button"
+              onClick={() => setPreviewMode('theme')}
+              className={`px-2.5 py-1 rounded-md transition-all font-medium ${
+                previewMode === 'theme'
+                  ? 'bg-background text-foreground shadow-xs font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Tema Gelap/Terang
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreviewMode('paper')}
+              className={`px-2.5 py-1 rounded-md transition-all font-medium ${
+                previewMode === 'paper'
+                  ? 'bg-background text-foreground shadow-xs font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Kertas A4 Putih
+            </button>
+          </div>
+
           <Button
             variant="outline"
             size="sm"
@@ -224,21 +270,21 @@ export default function LaporanClient({
       <div className="print:hidden">
         {activeTab === 'keuangan' && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Total Pemasukan</span>
               <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
                 {formatRupiah(keuanganData.totalPemasukan)}
               </p>
               <p className="text-[11px] text-muted-foreground mt-0.5">Dari iuran & donatur</p>
             </div>
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Total Pengeluaran</span>
               <p className="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1">
                 {formatRupiah(keuanganData.totalPengeluaran)}
               </p>
               <p className="text-[11px] text-muted-foreground mt-0.5">Operasional & kegiatan</p>
             </div>
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Saldo Kas Terkini</span>
               <p className="text-xl font-bold text-primary mt-1">
                 {formatRupiah(keuanganData.saldoBersih)}
@@ -250,17 +296,17 @@ export default function LaporanClient({
 
         {activeTab === 'kegiatan' && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Total Program Kerja</span>
               <p className="text-xl font-bold text-foreground mt-1">{kegiatanData.totalKegiatan} Kegiatan</p>
             </div>
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Kegiatan Terlaksana</span>
               <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
                 {kegiatanData.kegiatanSelesai} Sukses
               </p>
             </div>
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Kegiatan Mendatang</span>
               <p className="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">
                 {kegiatanData.kegiatanMendatang} Terjadwal
@@ -271,17 +317,17 @@ export default function LaporanClient({
 
         {activeTab === 'anggota' && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Total Buku Induk</span>
               <p className="text-xl font-bold text-foreground mt-1">{anggotaData.total} Orang</p>
             </div>
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Pemuda (Laki-laki)</span>
               <p className="text-xl font-bold text-blue-600 dark:text-blue-400 mt-1">
                 {anggotaData.pria} Orang
               </p>
             </div>
-            <div className="p-4 rounded-xl border bg-card shadow-sm">
+            <div className="p-4 rounded-xl border bg-card text-card-foreground shadow-sm">
               <span className="text-xs text-muted-foreground block">Pemudi (Perempuan)</span>
               <p className="text-xl font-bold text-pink-600 dark:text-pink-400 mt-1">
                 {anggotaData.wanita} Orang
@@ -291,10 +337,22 @@ export default function LaporanClient({
         )}
       </div>
 
-      {/* DOCUMENT PREVIEW CONTAINER (Styled for Screen & Perfect for Print) */}
-      <div className="rounded-xl border bg-card shadow-sm p-6 sm:p-10 print:border-none print:shadow-none print:p-0 print:bg-white print:text-black">
+      {/* DOCUMENT PREVIEW CONTAINER */}
+      <div
+        className={`rounded-2xl transition-colors duration-200 ${
+          isPaper
+            ? 'bg-white text-gray-900 border border-gray-300 shadow-2xl p-6 sm:p-12 max-w-4xl mx-auto'
+            : 'bg-card text-card-foreground border border-border shadow-sm p-6 sm:p-10'
+        } print:border-none print:shadow-none print:p-0 print:m-0 print:max-w-none print:bg-white print:text-black`}
+      >
         {/* OFFICIAL KOP SURAT */}
-        <div className="border-b-2 border-black pb-4 mb-6">
+        <div
+          className={`border-b-2 pb-4 mb-6 ${
+            isPaper
+              ? 'border-gray-900'
+              : 'border-border'
+          } print:border-black`}
+        >
           <div className="flex items-center gap-4">
             <img
               src="/images/logo.png"
@@ -302,13 +360,25 @@ export default function LaporanClient({
               className="h-16 w-16 object-contain shrink-0"
             />
             <div className="text-center flex-1">
-              <h2 className="text-lg font-bold tracking-wider uppercase text-black font-serif">
+              <h2
+                className={`text-lg font-bold tracking-wider uppercase font-serif ${
+                  isPaper ? 'text-gray-900' : 'text-foreground'
+                } print:text-black`}
+              >
                 {orgInfo.nama_organisasi}
               </h2>
-              <p className="text-xs font-semibold text-black uppercase tracking-wide">
+              <p
+                className={`text-xs font-semibold uppercase tracking-wide ${
+                  isPaper ? 'text-gray-800' : 'text-foreground/90'
+                } print:text-black`}
+              >
                 {orgInfo.nama_dusun}, Desa {orgInfo.desa}, Kab. {orgInfo.kabupaten}
               </p>
-              <p className="text-[11px] text-gray-700 italic mt-0.5">
+              <p
+                className={`text-[11px] italic mt-0.5 ${
+                  isPaper ? 'text-gray-600' : 'text-muted-foreground'
+                } print:text-gray-700`}
+              >
                 Alamat: {orgInfo.alamat} · Kontak: {orgInfo.telepon} · Email: {orgInfo.email}
               </p>
             </div>
@@ -317,12 +387,20 @@ export default function LaporanClient({
 
         {/* DOCUMENT TITLE & METADATA */}
         <div className="text-center mb-6 space-y-1">
-          <h3 className="text-base font-bold uppercase underline tracking-wide text-black font-serif">
+          <h3
+            className={`text-base font-bold uppercase underline tracking-wide font-serif ${
+              isPaper ? 'text-gray-900' : 'text-foreground'
+            } print:text-black`}
+          >
             {activeTab === 'keuangan' && 'LAPORAN REKAPITULASI KEUANGAN ORGANISASI'}
             {activeTab === 'kegiatan' && 'LAPORAN REKAPITULASI REALISASI PROGRAM KEGIATAN'}
             {activeTab === 'anggota' && 'BUKU INDUK KEANGGOTAAN PEMUDA KARANG TARUNA'}
           </h3>
-          <p className="text-xs text-gray-700">
+          <p
+            className={`text-xs ${
+              isPaper ? 'text-gray-600' : 'text-muted-foreground'
+            } print:text-gray-700`}
+          >
             Dicetak pada: {printDateStr} · Status: Dokumen Resmi Terverifikasi
           </p>
         </div>
@@ -331,56 +409,70 @@ export default function LaporanClient({
         {activeTab === 'keuangan' && (
           <div className="space-y-4">
             <div className="overflow-x-hidden">
-              <table className="w-full text-xs text-left border border-black border-collapse table-fixed">
+              <table className={`w-full text-xs text-left border ${tableBorder} border-collapse table-fixed print:border-black`}>
                 <thead>
-                  <tr className="bg-gray-100 text-black border-b border-black font-bold">
-                    <th className="py-2 px-2 border-r border-black w-[6%] text-center">No</th>
-                    <th className="py-2 px-2 border-r border-black w-[14%]">Tanggal</th>
-                    <th className="py-2 px-2 border-r border-black w-[12%] text-center">Tipe</th>
-                    <th className="py-2 px-2 border-r border-black w-[18%]">Kategori</th>
-                    <th className="py-2 px-2 border-r border-black w-[26%]">Keterangan</th>
-                    <th className="py-2 px-2 border-r border-black w-[12%] text-right">Pemasukan</th>
-                    <th className="py-2 px-2 w-[12%] text-right">Pengeluaran</th>
+                  <tr className="print:bg-gray-100 print:text-black print:border-black">
+                    <th className={`${thStyle} w-[6%] text-center print:border-black`}>No</th>
+                    <th className={`${thStyle} w-[14%] print:border-black`}>Tanggal</th>
+                    <th className={`${thStyle} w-[12%] text-center print:border-black`}>Tipe</th>
+                    <th className={`${thStyle} w-[18%] print:border-black`}>Kategori</th>
+                    <th className={`${thStyle} w-[26%] print:border-black`}>Keterangan</th>
+                    <th className={`${thStyle} w-[12%] text-right print:border-black`}>Pemasukan</th>
+                    <th className={`${thStyle} w-[12%] text-right print:border-black`}>Pengeluaran</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-black/20 text-black">
+                <tbody className={`divide-y ${isPaper ? 'divide-gray-200' : 'divide-border'} print:divide-black/20`}>
                   {keuanganData.items.map((item, idx) => (
-                    <tr key={item.id} className="border-b border-black/10">
-                      <td className="py-1.5 px-2 border-r border-black/20 text-center">{idx + 1}</td>
-                      <td className="py-1.5 px-2 border-r border-black/20">{item.tanggal}</td>
-                      <td className="py-1.5 px-2 border-r border-black/20 text-center uppercase font-medium">
+                    <tr key={item.id} className={`${trStyle} print:border-black/10`}>
+                      <td className={`${tdStyle} text-center print:border-black/20`}>{idx + 1}</td>
+                      <td className={`${tdStyle} print:border-black/20`}>{item.tanggal}</td>
+                      <td className={`${tdStyle} text-center uppercase font-medium print:border-black/20`}>
                         {item.tipe}
                       </td>
-                      <td className="py-1.5 px-2 border-r border-black/20 truncate">{item.kategori}</td>
-                      <td className="py-1.5 px-2 border-r border-black/20 truncate" title={item.keterangan}>
+                      <td className={`${tdStyle} truncate print:border-black/20`}>{item.kategori}</td>
+                      <td className={`${tdStyle} truncate print:border-black/20`} title={item.keterangan}>
                         {item.keterangan}
                       </td>
-                      <td className="py-1.5 px-2 border-r border-black/20 text-right font-medium">
+                      <td className={`${tdStyle} text-right font-medium print:border-black/20 ${
+                        item.tipe === 'pemasukan' ? (isPaper ? 'text-emerald-700 font-semibold' : 'text-emerald-600 dark:text-emerald-400') : ''
+                      } print:text-black`}>
                         {item.tipe === 'pemasukan' ? formatRupiah(item.jumlah) : '-'}
                       </td>
-                      <td className="py-1.5 px-2 text-right font-medium text-black">
+                      <td className={`${tdStyle} text-right font-medium ${
+                        item.tipe === 'pengeluaran' ? (isPaper ? 'text-rose-700 font-semibold' : 'text-rose-600 dark:text-rose-400') : ''
+                      } print:text-black`}>
                         {item.tipe === 'pengeluaran' ? formatRupiah(item.jumlah) : '-'}
                       </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-gray-100 font-bold border-t border-black text-black">
-                    <td colSpan={5} className="py-2 px-2 text-right border-r border-black uppercase">
+                  <tr className={`font-bold border-t ${
+                    isPaper ? 'bg-gray-100 text-gray-900 border-gray-900' : 'bg-muted/70 text-foreground border-border'
+                  } print:bg-gray-100 print:text-black print:border-black`}>
+                    <td colSpan={5} className="py-2 px-2 text-right border-r border-inherit uppercase">
                       Total Akumulasi
                     </td>
-                    <td className="py-2 px-2 text-right border-r border-black text-emerald-800">
+                    <td className={`py-2 px-2 text-right border-r border-inherit ${
+                      isPaper ? 'text-emerald-800' : 'text-emerald-600 dark:text-emerald-400'
+                    } print:text-black`}>
                       {formatRupiah(keuanganData.totalPemasukan)}
                     </td>
-                    <td className="py-2 px-2 text-right text-rose-800">
+                    <td className={`py-2 px-2 text-right ${
+                      isPaper ? 'text-rose-800' : 'text-rose-600 dark:text-rose-400'
+                    } print:text-black`}>
                       {formatRupiah(keuanganData.totalPengeluaran)}
                     </td>
                   </tr>
-                  <tr className="bg-gray-200 font-bold border-t border-black text-black">
-                    <td colSpan={5} className="py-2 px-2 text-right border-r border-black uppercase">
+                  <tr className={`font-bold border-t ${
+                    isPaper ? 'bg-gray-200 text-gray-900 border-gray-900' : 'bg-muted text-foreground border-border'
+                  } print:bg-gray-200 print:text-black print:border-black`}>
+                    <td colSpan={5} className="py-2 px-2 text-right border-r border-inherit uppercase">
                       Sisa Saldo Kas Bersih
                     </td>
-                    <td colSpan={2} className="py-2 px-2 text-right font-bold text-sm">
+                    <td colSpan={2} className={`py-2 px-2 text-right font-bold text-sm ${
+                      isPaper ? 'text-gray-950' : 'text-primary'
+                    } print:text-black`}>
                       {formatRupiah(keuanganData.saldoBersih)}
                     </td>
                   </tr>
@@ -394,30 +486,30 @@ export default function LaporanClient({
         {activeTab === 'kegiatan' && (
           <div className="space-y-4">
             <div className="overflow-x-hidden">
-              <table className="w-full text-xs text-left border border-black border-collapse table-fixed">
+              <table className={`w-full text-xs text-left border ${tableBorder} border-collapse table-fixed print:border-black`}>
                 <thead>
-                  <tr className="bg-gray-100 text-black border-b border-black font-bold">
-                    <th className="py-2 px-2 border-r border-black w-[6%] text-center">No</th>
-                    <th className="py-2 px-3 border-r border-black w-[24%]">Nama Kegiatan</th>
-                    <th className="py-2 px-2 border-r border-black w-[15%]">Tanggal</th>
-                    <th className="py-2 px-2 border-r border-black w-[18%]">Lokasi</th>
-                    <th className="py-2 px-2 border-r border-black w-[12%] text-center">Status</th>
-                    <th className="py-2 px-3 w-[25%]">Deskripsi / Hasil</th>
+                  <tr className="print:bg-gray-100 print:text-black print:border-black">
+                    <th className={`${thStyle} w-[6%] text-center print:border-black`}>No</th>
+                    <th className={`${thStyle} w-[24%] print:border-black`}>Nama Kegiatan</th>
+                    <th className={`${thStyle} w-[15%] print:border-black`}>Tanggal</th>
+                    <th className={`${thStyle} w-[18%] print:border-black`}>Lokasi</th>
+                    <th className={`${thStyle} w-[12%] text-center print:border-black`}>Status</th>
+                    <th className={`${thStyle} w-[25%] print:border-black`}>Deskripsi / Hasil</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-black/20 text-black">
+                <tbody className={`divide-y ${isPaper ? 'divide-gray-200' : 'divide-border'} print:divide-black/20`}>
                   {kegiatanData.items.map((item, idx) => (
-                    <tr key={item.id} className="border-b border-black/10">
-                      <td className="py-2 px-2 border-r border-black/20 text-center">{idx + 1}</td>
-                      <td className="py-2 px-3 border-r border-black/20 font-semibold truncate" title={item.judul}>
+                    <tr key={item.id} className={`${trStyle} print:border-black/10`}>
+                      <td className={`${tdStyle} text-center print:border-black/20`}>{idx + 1}</td>
+                      <td className={`${tdStyle} font-semibold truncate print:border-black/20`} title={item.judul}>
                         {item.judul}
                       </td>
-                      <td className="py-2 px-2 border-r border-black/20">{item.tanggal}</td>
-                      <td className="py-2 px-2 border-r border-black/20 truncate">{item.lokasi || '-'}</td>
-                      <td className="py-2 px-2 border-r border-black/20 text-center uppercase font-medium">
+                      <td className={`${tdStyle} print:border-black/20`}>{item.tanggal}</td>
+                      <td className={`${tdStyle} truncate print:border-black/20`}>{item.lokasi || '-'}</td>
+                      <td className={`${tdStyle} text-center uppercase font-medium print:border-black/20`}>
                         {item.status}
                       </td>
-                      <td className="py-2 px-3 truncate" title={item.deskripsi}>
+                      <td className={`${tdStyle} truncate`} title={item.deskripsi}>
                         {item.deskripsi}
                       </td>
                     </tr>
@@ -432,36 +524,36 @@ export default function LaporanClient({
         {activeTab === 'anggota' && (
           <div className="space-y-4">
             <div className="overflow-x-hidden">
-              <table className="w-full text-xs text-left border border-black border-collapse table-fixed">
+              <table className={`w-full text-xs text-left border ${tableBorder} border-collapse table-fixed print:border-black`}>
                 <thead>
-                  <tr className="bg-gray-100 text-black border-b border-black font-bold">
-                    <th className="py-2 px-2 border-r border-black w-[5%] text-center">No</th>
-                    <th className="py-2 px-3 border-r border-black w-[22%]">Nama Lengkap</th>
-                    <th className="py-2 px-2 border-r border-black w-[8%] text-center">L/P</th>
-                    <th className="py-2 px-2 border-r border-black w-[15%]">TTL</th>
-                    <th className="py-2 px-2 border-r border-black w-[10%] text-center">Wilayah</th>
-                    <th className="py-2 px-2 border-r border-black w-[12%] text-center">Status</th>
-                    <th className="py-2 px-2 border-r border-black w-[14%]">Jabatan</th>
-                    <th className="py-2 px-2 w-[14%]">Minat / Bakat</th>
+                  <tr className="print:bg-gray-100 print:text-black print:border-black">
+                    <th className={`${thStyle} w-[5%] text-center print:border-black`}>No</th>
+                    <th className={`${thStyle} w-[22%] print:border-black`}>Nama Lengkap</th>
+                    <th className={`${thStyle} w-[8%] text-center print:border-black`}>L/P</th>
+                    <th className={`${thStyle} w-[15%] print:border-black`}>TTL</th>
+                    <th className={`${thStyle} w-[10%] text-center print:border-black`}>Wilayah</th>
+                    <th className={`${thStyle} w-[12%] text-center print:border-black`}>Status</th>
+                    <th className={`${thStyle} w-[14%] print:border-black`}>Jabatan</th>
+                    <th className={`${thStyle} w-[14%] print:border-black`}>Minat / Bakat</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-black/20 text-black">
+                <tbody className={`divide-y ${isPaper ? 'divide-gray-200' : 'divide-border'} print:divide-black/20`}>
                   {anggotaData.items.map((item, idx) => (
-                    <tr key={item.id} className="border-b border-black/10">
-                      <td className="py-2 px-2 border-r border-black/20 text-center">{idx + 1}</td>
-                      <td className="py-2 px-3 border-r border-black/20 font-semibold truncate" title={item.nama}>
+                    <tr key={item.id} className={`${trStyle} print:border-black/10`}>
+                      <td className={`${tdStyle} text-center print:border-black/20`}>{idx + 1}</td>
+                      <td className={`${tdStyle} font-semibold truncate print:border-black/20`} title={item.nama}>
                         {item.nama}
                       </td>
-                      <td className="py-2 px-2 border-r border-black/20 text-center">{item.jenis_kelamin}</td>
-                      <td className="py-2 px-2 border-r border-black/20 truncate">
+                      <td className={`${tdStyle} text-center print:border-black/20`}>{item.jenis_kelamin}</td>
+                      <td className={`${tdStyle} truncate print:border-black/20`}>
                         {item.tempat_lahir || '-'}{item.tanggal_lahir ? `, ${item.tanggal_lahir}` : ''}
                       </td>
-                      <td className="py-2 px-2 border-r border-black/20 text-center">
+                      <td className={`${tdStyle} text-center print:border-black/20`}>
                         RT {item.rt} / RW {item.rw}
                       </td>
-                      <td className="py-2 px-2 border-r border-black/20 text-center">{item.status}</td>
-                      <td className="py-2 px-2 border-r border-black/20 truncate">{item.jabatan || 'Anggota'}</td>
-                      <td className="py-2 px-2 truncate">{item.minat_bakat || '-'}</td>
+                      <td className={`${tdStyle} text-center print:border-black/20`}>{item.status}</td>
+                      <td className={`${tdStyle} truncate print:border-black/20`}>{item.jabatan || 'Anggota'}</td>
+                      <td className={`${tdStyle} truncate`}>{item.minat_bakat || '-'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -471,15 +563,31 @@ export default function LaporanClient({
         )}
 
         {/* OFFICIAL SIGNATURE SECTION */}
-        <div className="mt-12 pt-4 grid grid-cols-2 text-center text-xs text-black break-inside-avoid">
+        <div
+          className={`mt-12 pt-4 grid grid-cols-2 text-center text-xs break-inside-avoid ${
+            isPaper ? 'text-gray-900' : 'text-foreground'
+          } print:text-black`}
+        >
           <div className="space-y-16">
             <p className="font-medium">
               Mengetahui,<br />
               <strong>Ketua Karang Taruna</strong>
             </p>
             <div>
-              <p className="font-bold underline text-sm">{orgInfo.ketua_nama}</p>
-              <p className="text-[11px] text-gray-700">NRP: KT-01-2024</p>
+              <p
+                className={`font-bold underline text-sm ${
+                  isPaper ? 'text-gray-900' : 'text-foreground'
+                } print:text-black`}
+              >
+                {orgInfo.ketua_nama}
+              </p>
+              <p
+                className={`text-[11px] ${
+                  isPaper ? 'text-gray-600' : 'text-muted-foreground'
+                } print:text-gray-700`}
+              >
+                NRP: KT-01-2024
+              </p>
             </div>
           </div>
 
@@ -489,10 +597,20 @@ export default function LaporanClient({
               <strong>{activeTab === 'keuangan' ? 'Bendahara Umum' : 'Sekretaris Umum'}</strong>
             </p>
             <div>
-              <p className="font-bold underline text-sm">
+              <p
+                className={`font-bold underline text-sm ${
+                  isPaper ? 'text-gray-900' : 'text-foreground'
+                } print:text-black`}
+              >
                 {activeTab === 'keuangan' ? orgInfo.bendahara_nama : orgInfo.sekretaris_nama}
               </p>
-              <p className="text-[11px] text-gray-700">NRP: KT-01-2025</p>
+              <p
+                className={`text-[11px] ${
+                  isPaper ? 'text-gray-600' : 'text-muted-foreground'
+                } print:text-gray-700`}
+              >
+                NRP: KT-01-2025
+              </p>
             </div>
           </div>
         </div>
