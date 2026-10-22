@@ -218,3 +218,16 @@ select option {
   background-color: #181b20 !important;
   color: #ffffff !important;
 }
+
+/* ── Smooth Theme Transition ── */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, fill 0.4s ease, stroke 0.4s ease, box-shadow 0.4s ease !important;
+  transition-delay: 0s !important;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
