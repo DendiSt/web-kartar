@@ -14,8 +14,7 @@ import {
   Users,
   Wallet,
   Info,
-  PhoneCall,
-  ArrowRight
+  PhoneCall
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ThemeToggle } from "@/components/ThemeToggle"
@@ -165,8 +164,8 @@ export default function Navbar() {
               className="fixed top-16 left-0 right-0 z-50 bg-white/95 dark:bg-[#101214]/95 backdrop-blur-xl border-b border-[#f0f1f2] dark:border-[#292a2e] shadow-2xl overflow-hidden md:hidden"
             >
               <div className="container mx-auto px-4 sm:px-6 py-5 max-w-[1200px] space-y-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
-                {/* Menu items in clean, spacious 2-column cards */}
-                <div className="grid grid-cols-2 gap-2.5">
+                {/* Menu items: 1 column on compact mobile, 2 columns on larger mobile */}
+                <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-1.5 sm:gap-2">
                   {navLinks.map((link) => {
                     const isActive = pathname === link.href
                     const Icon = link.icon
@@ -175,7 +174,7 @@ export default function Navbar() {
                         key={link.href}
                         href={link.href}
                         onClick={() => setIsOpen(false)}
-                        className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all ${
+                        className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                           isActive
                             ? "bg-[#1868db] text-white font-semibold shadow-md shadow-[#1868db]/25 scale-[1.01]"
                             : "bg-muted/40 hover:bg-muted text-foreground/85 hover:text-foreground active:scale-[0.98]"
@@ -186,23 +185,15 @@ export default function Navbar() {
                             isActive ? 'text-white' : 'text-[#1868db]'
                           }`} 
                         />
-                        <span className="truncate">{link.label}</span>
+                        <span className="font-medium whitespace-nowrap">{link.label}</span>
                       </Link>
                     )
                   })}
                 </div>
 
-                {/* Footer bar inside mobile menu */}
-                <div className="pt-3 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
-                  <span className="truncate">Karang Taruna Tirtajaya 01</span>
-                  <Link
-                    href="/login"
-                    onClick={() => setIsOpen(false)}
-                    className="inline-flex items-center gap-1 font-semibold text-[#1868db] hover:underline px-2.5 py-1 rounded-lg hover:bg-[#1868db]/10 transition-colors"
-                  >
-                    <span>Login Admin</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                {/* Footer note inside mobile menu */}
+                <div className="pt-3 border-t border-border/60 flex items-center justify-center text-xs text-muted-foreground text-center">
+                  <span>Karang Taruna Tirtajaya 01 &bull; Dusun Sumurgintung</span>
                 </div>
               </div>
             </motion.div>
