@@ -7,15 +7,15 @@ import { ArrowRight, Sparkles, Users, Calendar } from 'lucide-react'
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-[#101214] text-white py-20 md:py-28">
+    <section className="relative overflow-hidden bg-[#f4f5f7] dark:bg-[#101214] text-foreground transition-colors duration-300 py-20 md:py-28 border-b border-[#e5e7eb] dark:border-[#292a2e]/60">
       {/* Signature Atlassian Geometric Confetti Borders & Angles */}
-      <div className="absolute top-0 left-0 w-32 h-32 md:w-56 md:h-56 pointer-events-none select-none overflow-hidden opacity-90">
+      <div className="absolute top-0 left-0 w-32 h-32 md:w-56 md:h-56 pointer-events-none select-none overflow-hidden opacity-85 dark:opacity-90">
         <div className="absolute -top-12 -left-12 w-32 h-16 bg-[#bf63f3] -rotate-12 transform origin-top-left rounded-sm" />
         <div className="absolute top-16 -left-6 w-24 h-10 bg-[#fca700] rotate-45 transform rounded-sm" />
         <div className="absolute top-28 left-12 w-14 h-6 bg-[#1868db] -rotate-12 transform rounded-sm" />
       </div>
 
-      <div className="absolute bottom-0 right-0 w-40 h-40 md:w-72 md:h-72 pointer-events-none select-none overflow-hidden opacity-90">
+      <div className="absolute bottom-0 right-0 w-40 h-40 md:w-72 md:h-72 pointer-events-none select-none overflow-hidden opacity-85 dark:opacity-90">
         <div className="absolute -bottom-10 -right-10 w-44 h-20 bg-[#1868db] rotate-12 transform origin-bottom-right rounded-sm" />
         <div className="absolute bottom-20 -right-6 w-32 h-10 bg-[#36b37e] -rotate-45 transform rounded-sm" />
         <div className="absolute bottom-32 right-16 w-16 h-8 bg-[#fca700] rotate-12 transform rounded-sm" />
@@ -32,14 +32,14 @@ export default function HeroSection() {
             className="lg:col-span-7 text-left space-y-6"
           >
             {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 text-[#fca700] border border-white/15 text-xs font-semibold tracking-wide">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#fca700]/15 dark:bg-white/10 text-[#a35200] dark:text-[#fca700] border border-[#fca700]/30 dark:border-white/15 text-xs font-semibold tracking-wide transition-colors">
               <Sparkles className="w-3.5 h-3.5" />
               <span>PEMUDA KREATIF, DESA BERDAYA</span>
             </div>
 
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.02em] leading-[1.08] text-white">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.02em] leading-[1.08] text-[#101214] dark:text-white transition-colors">
               Sinergi Pemuda, Membangun{' '}
-              <span className="text-white relative inline-block">
+              <span className="text-[#101214] dark:text-white relative inline-block">
                 Tirtajaya 01
                 {/* Yellow hand-drawn flourish stroke beneath */}
                 <svg className="absolute -bottom-2 left-0 w-full h-3 text-[#fca700]" viewBox="0 0 100 20" preserveAspectRatio="none">
@@ -48,17 +48,17 @@ export default function HeroSection() {
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-gray-300 max-w-xl font-normal leading-relaxed pt-2">
+            <p className="text-lg md:text-xl text-[#42526e] dark:text-gray-300 max-w-xl font-normal leading-relaxed pt-2 transition-colors">
               Wadah generasi muda Karang Taruna Dusun Tirtajaya 01 untuk berkarya, berinovasi, dan melayani masyarakat dengan semangat gotong royong.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-4">
-              {/* The Yellow CTA Button (Signature Atlassian Dark Hero button) */}
+              {/* The Yellow CTA Button (Signature Atlassian Hero button) */}
               <Link href="/kegiatan">
                 <Button
                   variant="yellow"
                   size="lg"
-                  className="rounded-full px-8 h-12 text-base font-semibold text-[#101214] shadow-none hover:bg-[#fca700]/90 transition-all hover:scale-[1.02]"
+                  className="rounded-full px-8 h-12 text-base font-semibold bg-[#fca700] hover:bg-[#fca700]/90 text-[#101214] shadow-md shadow-[#fca700]/20 transition-all hover:scale-[1.02]"
                 >
                   Jelajahi Kegiatan <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -69,7 +69,7 @@ export default function HeroSection() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="rounded-full px-7 h-12 text-base border-white/30 text-white hover:bg-white/10 hover:text-white transition-all"
+                  className="rounded-full px-7 h-12 text-base border-slate-300 dark:border-white/30 text-[#101214] dark:text-white bg-white/80 dark:bg-transparent hover:bg-slate-200/60 dark:hover:bg-white/10 transition-all shadow-xs"
                 >
                   Jadwal Agenda
                 </Button>
