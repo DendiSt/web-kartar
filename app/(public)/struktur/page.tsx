@@ -16,7 +16,7 @@ export default async function StrukturPublicPage() {
   const activeMembers = data.filter(item => item.is_active)
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-10 md:py-20 max-w-6xl space-y-10 md:space-y-12">
+    <div className="container mx-auto px-2 sm:px-6 md:px-8 py-6 sm:py-10 md:py-16 max-w-6xl space-y-6 sm:space-y-10">
       {/* Header Section */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
