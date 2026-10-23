@@ -31,7 +31,7 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm text-[#42526e] dark:text-[#b7b9be]">
               <li className="flex gap-2">
                 <span className="text-[#1868db]">📍</span>
-                <span>Sumurgintung, RT 07/RW 02, Desa Sumurgintung</span>
+                <span>Dusun Sumurgintung, RT 07/RW 02, Desa Sumurgintung</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-[#1868db]">📱</span>
@@ -41,8 +41,8 @@ export default function Footer() {
               </li>
               <li className="flex gap-2">
                 <span className="text-[#1868db]">📱</span>
-                <a href="https://wa.me/6285295619819" target="_blank" rel="noopener noreferrer" className="hover:text-[#1868db]">
-                  0852-9561-9819 (Sekretaris)
+                <a href="https://wa.me/6285794364390" target="_blank" rel="noopener noreferrer" className="hover:text-[#1868db]">
+                  0857-9436-4390 (Wakil Ketua)
                 </a>
               </li>
             </ul>

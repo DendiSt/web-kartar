@@ -225,14 +225,17 @@ export default async function Home() {
             )}
           </div>
           
-          <div className="mt-14 text-center">
-            <Link href="/kegiatan">
+          {/* Action button to view all kegiatan */}
+          <div className="mt-12 md:mt-16 flex justify-center">
+            <Link href="/kegiatan" className="w-full sm:w-auto flex justify-center">
               <Button 
                 variant="outline" 
                 size="lg"
-                className="rounded-full px-8 h-11 text-sm border-[#101214] dark:border-white text-[#101214] dark:text-white hover:bg-[#f0f1f2] dark:hover:bg-white/10"
+                className="group w-full sm:w-auto max-w-sm sm:max-w-none rounded-full px-6 sm:px-8 h-12 text-sm font-semibold border-border hover:border-[#1868db] bg-background hover:bg-[#1868db]/5 text-foreground hover:text-[#1868db] shadow-xs transition-all active:scale-[0.98]"
               >
-                Lihat Semua Kegiatan & Program Kerja
+                <span>Lihat Semua Kegiatan</span>
+                <span className="hidden sm:inline">&nbsp;&amp; Program Kerja</span>
+                <ArrowRight className="ml-2 h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
           </div>
