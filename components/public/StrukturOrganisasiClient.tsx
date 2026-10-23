@@ -2,15 +2,21 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { 
   Users, 
+  Crown, 
+  ShieldCheck, 
+  Award, 
+  Briefcase, 
   Network, 
   LayoutGrid, 
   Search, 
   Phone, 
-  Mail
+  Mail,
+  Layers
 } from 'lucide-react'
 
 export interface StrukturMember {
@@ -32,7 +38,7 @@ interface Props {
 }
 
 export default function StrukturOrganisasiClient({ initialMembers }: Props) {
-  const [viewMode, setViewMode] = useState<'diagram' | 'grid'>('diagram')
+  const [viewMode, setViewMode] = useState<'tree' | 'grid'>('tree')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedFilter, setSelectedFilter] = useState('semua')
 
@@ -40,9 +46,8 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
   const pembinas: StrukturMember[] = []
   const ketuas: StrukturMember[] = []
   const wakils: StrukturMember[] = []
-  const sekretarisList: StrukturMember[] = []
-  const bendaharaList: StrukturMember[] = []
-  const bidangList: StrukturMember[] = []
+  const bph: StrukturMember[] = [] // Sekretaris & Bendahara
+  const lainnya: StrukturMember[] = []
 
   initialMembers.forEach((m) => {
     const j = m.jabatan.toLowerCase().trim()
@@ -52,12 +57,10 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
       ketuas.push(m)
     } else if (j.includes('wakil')) {
       wakils.push(m)
-    } else if (j.includes('sekretaris')) {
-      sekretarisList.push(m)
-    } else if (j.includes('bendahara')) {
-      bendaharaList.push(m)
+    } else if (j.includes('sekretaris') || j.includes('bendahara')) {
+      bph.push(m)
     } else {
-      bidangList.push(m)
+      lainnya.push(m)
     }
   })
 
@@ -65,9 +68,8 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
   pembinas.sort(sortByUrutan)
   ketuas.sort(sortByUrutan)
   wakils.sort(sortByUrutan)
-  sekretarisList.sort(sortByUrutan)
-  bendaharaList.sort(sortByUrutan)
-  bidangList.sort(sortByUrutan)
+  bph.sort(sortByUrutan)
+  lainnya.sort(sortByUrutan)
 
   // Filtered members for Grid view
   const filteredGridMembers = initialMembers.filter((m) => {
@@ -91,28 +93,28 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      {/* View Switcher & Toolbar */}
+      {/* View Switcher & Toolbar (Compact & Sleek) */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-4 bg-card/60 backdrop-blur-sm p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-border">
-        {/* Toggle Buttons */}
+        {/* Compact Toggle Buttons */}
         <div className="flex items-center bg-muted/60 p-0.5 sm:p-1 rounded-lg border border-border/80 w-full sm:w-auto">
           <button
             type="button"
-            onClick={() => setViewMode('diagram')}
+            onClick={() => setViewMode('tree')}
             className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-[11px] sm:text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-              viewMode === 'diagram'
-                ? 'bg-red-700 text-white shadow-xs'
+              viewMode === 'tree'
+                ? 'bg-primary text-primary-foreground shadow-xs'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             <Network className="w-3.5 h-3.5 shrink-0" />
-            <span>Bagan Diagram</span>
+            <span>Bagan Struktur</span>
           </button>
           <button
             type="button"
             onClick={() => setViewMode('grid')}
             className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-[11px] sm:text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
               viewMode === 'grid'
-                ? 'bg-red-700 text-white shadow-xs'
+                ? 'bg-primary text-primary-foreground shadow-xs'
                 : 'text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -121,170 +123,149 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
           </button>
         </div>
 
-        {/* Info Period Badge */}
+        {/* Compact Period Badge & Count */}
         <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 text-[10px] sm:text-xs text-muted-foreground font-medium px-1 sm:px-0">
-          <Badge variant="outline" className="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border-red-500/30 bg-red-500/10 text-red-700 dark:text-red-400">
-            Periode 2026 - Sekarang
+          <Badge variant="outline" className="px-2 sm:px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-normal border-primary/20 bg-primary/5 text-primary">
+            2026 - Sekarang
           </Badge>
           <span>{initialMembers.length} Pengurus Aktif</span>
         </div>
       </div>
 
-      {/* 1. BAGAN DIAGRAM STRUKTUR (STYLE RESMI KARANG TARUNA SEPERTI POSTER) */}
-      {viewMode === 'diagram' ? (
-        <div className="relative rounded-2xl border-2 sm:border-4 border-red-700/80 dark:border-red-600/70 bg-gradient-to-b from-orange-500/5 via-card to-background p-3 sm:p-6 md:p-8 shadow-xl overflow-x-auto">
-          {/* Decorative Corner Accents */}
-          <div className="absolute top-0 left-0 w-8 h-8 sm:w-14 sm:h-14 border-t-4 border-l-4 border-orange-500 pointer-events-none rounded-tl-xl" />
-          <div className="absolute top-0 right-0 w-8 h-8 sm:w-14 sm:h-14 border-t-4 border-r-4 border-orange-500 pointer-events-none rounded-tr-xl" />
-          <div className="absolute bottom-0 left-0 w-8 h-8 sm:w-14 sm:h-14 border-b-4 border-l-4 border-orange-500 pointer-events-none rounded-bl-xl" />
-          <div className="absolute bottom-0 right-0 w-8 h-8 sm:w-14 sm:h-14 border-b-4 border-r-4 border-orange-500 pointer-events-none rounded-br-xl" />
+      {/* 1. BAGAN STRUKTUR (ORGANOGRAM TREE VIEW) */}
+      {viewMode === 'tree' ? (
+        <div className="space-y-2 sm:space-y-3 py-2">
+          {/* TIER 1: PEMBINA & PELINDUNG */}
+          {pembinas.length > 0 && (
+            <div className="flex flex-col items-center">
+              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 mb-2">
+                <ShieldCheck className="w-3 h-3" />
+                Dewan Pembina / Penasihat
+              </div>
+              <div className="flex flex-wrap justify-center items-center gap-3">
+                {pembinas.map((item) => (
+                  <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
+                    <CompactCard item={item} tier="pembina" />
+                  </div>
+                ))}
+              </div>
 
-          {/* Diagram Title Banner */}
-          <div className="text-center pb-5 sm:pb-8 border-b-2 border-red-700/20 dark:border-red-600/30 max-w-2xl mx-auto space-y-1 sm:space-y-1.5">
-            <h2 className="text-lg xs:text-xl sm:text-3xl md:text-4xl font-heading font-black tracking-tight text-foreground uppercase">
-              Struktur Organisasi
-            </h2>
-            <h3 className="text-sm xs:text-base sm:text-2xl md:text-3xl font-heading font-black text-red-700 dark:text-red-500 tracking-tight uppercase">
-              Karang Taruna Tirtajaya 01
-            </h3>
-            <p className="text-[10px] xs:text-xs sm:text-sm font-heading font-bold text-muted-foreground uppercase tracking-wider">
-              Dusun Sumurgintung &bull; Periode 2026 - Sekarang
-            </p>
-          </div>
-
-          {/* DIAGRAM FLOW CONTAINER */}
-          <div className="min-w-[320px] xs:min-w-[340px] sm:min-w-[580px] md:min-w-[700px] flex flex-col items-center pt-6 sm:pt-8 pb-4">
-            {/* TIER 0: PEMBINA / PENASIHAT (JIKA ADA) */}
-            {pembinas.length > 0 && (
-              <div className="flex flex-col items-center">
-                <div className="flex justify-center items-center gap-3">
-                  {pembinas.map((item) => (
-                    <div key={item.id} className="w-[180px] xs:w-[200px] sm:w-[240px] md:w-[260px]">
-                      <PosterCard item={item} />
-                    </div>
-                  ))}
+              {/* Connecting line to Ketua */}
+              {ketuas.length > 0 && (
+                <div className="flex flex-col items-center my-1">
+                  <div className="w-0.5 h-4 sm:h-6 bg-gradient-to-b from-amber-500/50 to-primary/50" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary/60 -mt-0.5" />
                 </div>
-                {/* Line down to Ketua */}
-                {ketuas.length > 0 && (
-                  <div className="w-1 h-6 sm:h-8 bg-slate-800 dark:bg-slate-300 mx-auto" />
-                )}
+              )}
+            </div>
+          )}
+
+          {/* TIER 2: KETUA */}
+          {ketuas.length > 0 && (
+            <div className="flex flex-col items-center">
+              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 mb-2">
+                <Crown className="w-3 h-3" />
+                Ketua Karang Taruna
               </div>
-            )}
-
-            {/* TIER 1: KETUA */}
-            {ketuas.length > 0 && (
-              <div className="flex flex-col items-center">
-                <div className="w-[180px] xs:w-[200px] sm:w-[240px] md:w-[260px]">
-                  {ketuas.map((item) => (
-                    <PosterCard key={item.id} item={item} />
-                  ))}
-                </div>
-                {/* Line down to Wakil */}
-                {wakils.length > 0 && (
-                  <div className="w-1 h-6 sm:h-8 bg-slate-800 dark:bg-slate-300 mx-auto" />
-                )}
+              <div className="flex flex-wrap justify-center items-center gap-3">
+                {ketuas.map((item) => (
+                  <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
+                    <CompactCard item={item} tier="ketua" />
+                  </div>
+                ))}
               </div>
-            )}
 
-            {/* TIER 2: WAKIL KETUA (1 ATAU 2 BERDAMPINGAN) */}
-            {wakils.length > 0 && (
-              <div className="flex flex-col items-center w-full">
-                {wakils.length === 1 ? (
-                  /* 1 Wakil Ketua (persis seperti poster referensi) */
-                  <div className="w-[180px] xs:w-[200px] sm:w-[240px] md:w-[260px]">
-                    <PosterCard item={wakils[0]} />
-                  </div>
-                ) : (
-                  /* 2 Wakil Ketua berdampingan */
-                  <div className="flex flex-col items-center w-full">
-                    {/* Horizontal Branch Bar linking Wakil 1 & Wakil 2 */}
-                    <div className="w-[200px] xs:w-[230px] sm:w-[320px] md:w-[380px] h-1 bg-slate-800 dark:bg-slate-300 relative">
-                      <div className="absolute left-0 top-0 w-1 h-4 sm:h-6 bg-slate-800 dark:bg-slate-300" />
-                      <div className="absolute right-0 top-0 w-1 h-4 sm:h-6 bg-slate-800 dark:bg-slate-300" />
-                    </div>
-                    {/* Cards */}
-                    <div className="flex justify-center items-center gap-3 sm:gap-6 pt-4 sm:pt-6">
-                      {wakils.map((item) => (
-                        <div key={item.id} className="w-[145px] xs:w-[160px] sm:w-[210px] md:w-[240px]">
-                          <PosterCard item={item} />
-                        </div>
-                      ))}
-                    </div>
-                    {/* Stems collecting back to central spine */}
-                    <div className="w-[200px] xs:w-[230px] sm:w-[320px] md:w-[380px] h-1 bg-slate-800 dark:bg-slate-300 relative mt-4 sm:mt-6">
-                      <div className="absolute left-0 bottom-0 w-1 h-4 sm:h-6 bg-slate-800 dark:bg-slate-300" />
-                      <div className="absolute right-0 bottom-0 w-1 h-4 sm:h-6 bg-slate-800 dark:bg-slate-300" />
-                    </div>
-                  </div>
-                )}
-
-                {/* Central Spine down through Sekretaris & Bendahara */}
-                {(sekretarisList.length > 0 || bendaharaList.length > 0) && (
-                  <div className="w-1 h-6 sm:h-8 bg-slate-800 dark:bg-slate-300 mx-auto" />
-                )}
-              </div>
-            )}
-
-            {/* TIER 3: SEKRETARIS (KIRI) & BENDAHARA (KANAN) - SEPERTI DI GAMBAR CONTOH */}
-            {(sekretarisList.length > 0 || bendaharaList.length > 0) && (
-              <div className="relative flex items-center justify-center w-full my-1 sm:my-2">
-                {/* Central vertical spine passing through the middle */}
-                <div className="absolute top-0 bottom-0 w-1 bg-slate-800 dark:bg-slate-300 -z-0" />
-
-                {/* Left (Sekretaris) and Right (Bendahara) Containers */}
-                <div className="relative z-10 flex items-center justify-between w-full max-w-[340px] xs:max-w-[370px] sm:max-w-[500px] md:max-w-[620px] px-1 sm:px-4">
-                  {/* Left: Sekretaris */}
-                  <div className="relative">
-                    {/* Horizontal connector into central spine */}
-                    <div className="absolute -right-4 sm:-right-8 top-1/2 -translate-y-1/2 w-4 sm:w-8 h-1 bg-slate-800 dark:bg-slate-300 -z-10" />
-                    {sekretarisList.length > 0 ? (
-                      <div className="w-[145px] xs:w-[160px] sm:w-[210px] md:w-[240px]">
-                        <PosterCard item={sekretarisList[0]} />
-                      </div>
-                    ) : (
-                      <div className="w-[145px] xs:w-[160px] sm:w-[210px] md:w-[240px] opacity-0" />
-                    )}
-                  </div>
-
-                  {/* Right: Bendahara */}
-                  <div className="relative">
-                    {/* Horizontal connector into central spine */}
-                    <div className="absolute -left-4 sm:-left-8 top-1/2 -translate-y-1/2 w-4 sm:w-8 h-1 bg-slate-800 dark:bg-slate-300 -z-10" />
-                    {bendaharaList.length > 0 ? (
-                      <div className="w-[145px] xs:w-[160px] sm:w-[210px] md:w-[240px]">
-                        <PosterCard item={bendaharaList[0]} />
-                      </div>
-                    ) : (
-                      <div className="w-[145px] xs:w-[160px] sm:w-[210px] md:w-[240px] opacity-0" />
-                    )}
+              {/* Connecting branch to Wakils (2 cards) */}
+              {wakils.length > 0 && (
+                <div className="flex flex-col items-center w-full my-1 sm:my-1.5">
+                  <div className="w-0.5 h-3.5 sm:h-5 bg-border" />
+                  <div className="w-[145px] xs:w-[160px] sm:w-[185px] md:w-[210px] h-0.5 bg-border relative">
+                    <div className="absolute left-0 top-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                    <div className="absolute right-0 top-0 w-0.5 h-3.5 sm:h-5 bg-border" />
                   </div>
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* TIER 3: WAKIL KETUA (2 CARD KIRI KANAN: WAKIL 1 & WAKIL 2) */}
+          {wakils.length > 0 && (
+            <div className="flex flex-col items-center">
+              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300 bg-sky-500/10 border border-sky-500/20 mb-2">
+                <Award className="w-3 h-3" />
+                Wakil Ketua
               </div>
-            )}
 
-            {/* TIER 4: SEKSI & BIDANG KERJA (BERJEJER DI BAWAH SEPERTI GAMBAR CONTOH) */}
-            {bidangList.length > 0 && (
-              <div className="flex flex-col items-center w-full mt-1 sm:mt-2">
-                {/* Spine drop from Sekretaris/Bendahara */}
-                <div className="w-1 h-6 sm:h-8 bg-slate-800 dark:bg-slate-300 mx-auto" />
-
-                {/* Horizontal branch bar across all Bidang */}
-                <div className="w-[85%] sm:w-[92%] max-w-4xl h-1 bg-slate-800 dark:bg-slate-300 relative">
-                  <div className="absolute left-0 top-0 w-1 h-4 sm:h-6 bg-slate-800 dark:bg-slate-300" />
-                  <div className="absolute right-0 top-0 w-1 h-4 sm:h-6 bg-slate-800 dark:bg-slate-300" />
-                </div>
-
-                {/* Grid of Bidang Cards */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 w-full max-w-4xl mx-auto pt-4 sm:pt-6">
-                  {bidangList.map((item) => (
-                    <div key={item.id} className="w-full">
-                      <PosterCard item={item} isBidang />
-                    </div>
-                  ))}
-                </div>
+              {/* Exactly 2 Cards side-by-side: Wakil 1 & Wakil 2 */}
+              <div className="flex justify-center items-center gap-3.5 xs:gap-4 sm:gap-6">
+                {wakils.map((item) => (
+                  <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
+                    <CompactCard item={item} tier="wakil" />
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+
+              {/* Connecting branch from Wakils down to BPH (Sekretaris & Bendahara) */}
+              {bph.length > 0 && (
+                <div className="flex flex-col items-center w-full my-1 sm:my-1.5">
+                  {/* Upper collector bar */}
+                  <div className="w-[145px] xs:w-[160px] sm:w-[185px] md:w-[210px] h-0.5 bg-border relative">
+                    <div className="absolute left-0 bottom-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                    <div className="absolute right-0 bottom-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                  </div>
+                  {/* Central vertical stem */}
+                  <div className="w-0.5 h-3.5 sm:h-5 bg-border" />
+                  {/* Lower distributor bar */}
+                  <div className="w-[145px] xs:w-[160px] sm:w-[185px] md:w-[210px] h-0.5 bg-border relative">
+                    <div className="absolute left-0 top-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                    <div className="absolute right-0 top-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TIER 4: PENGURUS HARIAN (2 CARD KIRI KANAN: SEKRETARIS & BENDAHARA) */}
+          {bph.length > 0 && (
+            <div className="flex flex-col items-center">
+              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 mb-2">
+                <Briefcase className="w-3 h-3" />
+                Sekretariat & Kebendaharaan
+              </div>
+
+              {/* Exactly 2 Cards side-by-side: Sekretaris & Bendahara */}
+              <div className="flex justify-center items-center gap-3.5 xs:gap-4 sm:gap-6">
+                {bph.map((item) => (
+                  <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
+                    <CompactCard item={item} tier="bph" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Connector to Seksi/Lainnya */}
+              {lainnya.length > 0 && (
+                <div className="flex flex-col items-center my-2">
+                  <div className="w-0.5 h-4 sm:h-6 bg-border" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary/60 -mt-0.5" />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TIER 5: SEKSI & KOORDINATOR BIDANG KERJA */}
+          {lainnya.length > 0 && (
+            <div className="flex flex-col items-center pt-2">
+              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-500/10 border border-purple-500/20 mb-2">
+                <Layers className="w-3 h-3" />
+                Seksi & Koordinator Bidang
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4 max-w-4xl mx-auto w-full">
+                {lainnya.map((item) => (
+                  <CompactCard key={item.id} item={item} tier="lainnya" />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         /* 2. DAFTAR PENGURUS (GRID VIEW DENGAN FILTER & SEARCH) */
@@ -328,9 +309,7 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4">
               {filteredGridMembers.map((item) => (
-                <div key={item.id} className="w-full">
-                  <PosterCard item={item} />
-                </div>
+                <CompactCard key={item.id} item={item} tier="grid" />
               ))}
             </div>
           )}
@@ -340,19 +319,14 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
   )
 }
 
-/**
- * Card bergaya resmi Karang Taruna (sesuai contoh gambar):
- * - Kiri: Kotak foto / avatar berbingkai merah
- * - Kanan Atas: Header merah dengan teks putih tebal (JABATAN)
- * - Kanan Bawah: Kotak kuning muda / cream dengan teks gelap tebal (NAMA)
- */
-function PosterCard({
+function CompactCard({
   item,
-  isBidang = false
+  tier
 }: {
   item: StrukturMember
-  isBidang?: boolean
+  tier: 'pembina' | 'ketua' | 'wakil' | 'bph' | 'lainnya' | 'grid'
 }) {
+  // Initials for avatar fallback
   const initials = item.nama_lengkap
     .split(' ')
     .filter(Boolean)
@@ -360,64 +334,85 @@ function PosterCard({
     .map((w) => w[0]?.toUpperCase())
     .join('') || 'KT'
 
+  const j = item.jabatan.toLowerCase()
+  const isKetua = tier === 'ketua' || (tier === 'grid' && j.includes('ketua') && !j.includes('wakil'))
+  const isPembina = tier === 'pembina' || (tier === 'grid' && (j.includes('pembina') || j.includes('penasihat')))
+  const isWakil = j.includes('wakil')
+  const isSekretaris = j.includes('sekretaris')
+  const isBendahara = j.includes('bendahara')
+
+  // Theme badges & colors
+  const badgeClass = isPembina
+    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30'
+    : isKetua
+    ? 'bg-primary/15 text-primary border-primary/30'
+    : isWakil
+    ? 'bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-500/30'
+    : isSekretaris
+    ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
+    : isBendahara
+    ? 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-500/30'
+    : 'bg-muted text-muted-foreground border-border'
+
+  const borderAccent = isKetua
+    ? 'border-primary/50 shadow-xs ring-1 ring-primary/20'
+    : isPembina
+    ? 'border-amber-500/40'
+    : 'border-border/80'
+
   return (
-    <div className="flex rounded-lg sm:rounded-xl overflow-hidden border-2 border-red-700 dark:border-red-600 shadow-md bg-white dark:bg-zinc-900 group transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5">
-      {/* KIRI: KOTAK FOTO / PLACEHOLDER (BERBINGKAI MERAH) */}
-      <div className={`relative ${isBidang ? 'w-10 sm:w-12' : 'w-12 xs:w-14 sm:w-16 md:w-20'} bg-red-700 dark:bg-red-800 flex items-center justify-center p-0.5 sm:p-1 shrink-0 overflow-hidden`}>
+    <Card className={`w-full bg-card rounded-xl sm:rounded-2xl border ${borderAccent} p-2 sm:p-3 flex flex-col items-center justify-between text-center shadow-2xs hover:shadow-md transition-all duration-300 relative group overflow-hidden`}>
+      {/* Avatar Container */}
+      <div className="relative mt-0.5 sm:mt-1">
         {item.foto_url ? (
-          <div className="relative w-full h-full aspect-square rounded overflow-hidden bg-white">
+          <div className="relative w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full overflow-hidden border border-border shadow-inner">
             <Image
               src={item.foto_url}
               alt={item.nama_lengkap}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="80px"
+              sizes="(max-width: 640px) 45px, 64px"
             />
           </div>
         ) : (
-          <div className="w-full h-full aspect-square rounded bg-red-800 dark:bg-red-900/60 border border-red-500/40 flex flex-col items-center justify-center text-white">
-            <span className="font-heading font-black text-[10px] xs:text-xs sm:text-sm md:text-base tracking-wider">
-              {initials}
-            </span>
+          <div className={`w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center font-heading font-extrabold text-xs sm:text-base md:text-lg border shadow-inner transition-transform duration-300 group-hover:scale-105 ${badgeClass}`}>
+            {initials}
           </div>
         )}
       </div>
 
-      {/* KANAN: BARIS ATAS (JABATAN MERAH) & BARIS BAWAH (NAMA KUNING/CREAM) */}
-      <div className="flex-1 flex flex-col justify-between min-w-0">
-        {/* Header Bar Jabatan: Background Merah, Teks Putih Tebal */}
-        <div className="bg-red-700 dark:bg-red-800 text-white px-1.5 sm:px-2 py-0.5 sm:py-1 text-center border-b border-red-800">
-          <span className={`font-heading font-black tracking-wider uppercase line-clamp-1 block leading-tight ${
-            isBidang ? 'text-[7px] sm:text-[9px]' : 'text-[8px] xs:text-[9px] sm:text-xs md:text-sm'
-          }`}>
-            {item.jabatan}
-          </span>
-        </div>
+      {/* Role / Jabatan Pill */}
+      <div className="mt-1 sm:mt-1.5 w-full px-0.5">
+        <span className={`inline-block w-full max-w-full text-[8px] sm:text-[10px] md:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full border truncate leading-none ${badgeClass}`}>
+          {item.jabatan}
+        </span>
+      </div>
 
-        {/* Box Nama Pengurus: Background Kuning Cerah/Cream, Teks Gelap Tebal */}
-        <div className="bg-[#fff9c4] dark:bg-zinc-800 text-slate-900 dark:text-amber-100 px-1 sm:px-2 py-1 sm:py-1.5 text-center flex-1 flex flex-col items-center justify-center">
-          <h4 className={`font-heading font-black uppercase tracking-tight line-clamp-2 leading-tight ${
-            isBidang ? 'text-[8px] sm:text-[10px]' : 'text-[9px] xs:text-[10px] sm:text-xs md:text-sm'
-          }`}>
-            {item.nama_lengkap}
-          </h4>
-          {item.divisi && (
-            <span className="text-[7px] sm:text-[8px] text-red-700 dark:text-red-400 font-bold uppercase line-clamp-1 mt-0.5">
-              {item.divisi}
-            </span>
-          )}
-        </div>
+      {/* Name & Divisi */}
+      <div className="my-1 sm:my-1.5 w-full px-0.5">
+        <h3 className="font-heading font-bold text-[11px] sm:text-xs md:text-sm text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+          {item.nama_lengkap}
+        </h3>
+        {item.divisi && (
+          <p className="text-[8px] sm:text-[9px] md:text-[10px] text-muted-foreground truncate leading-tight mt-0.5">
+            Div. {item.divisi}
+          </p>
+        )}
+      </div>
 
-        {/* Contact links on hover if present (Desktop only) */}
+      {/* Desktop/Tablet Extra Details: Periode & Contact links */}
+      <div className="hidden sm:flex flex-col w-full pt-1.5 border-t border-border/50 text-[10px] text-muted-foreground">
+        <span className="font-medium text-foreground/80 truncate">{item.periode || '2026-Sekarang'}</span>
+
         {(item.no_telepon || item.email) && (
-          <div className="hidden sm:flex items-center justify-center gap-1.5 py-0.5 bg-[#fff59d] dark:bg-zinc-900 border-t border-red-700/20 text-[9px]">
+          <div className="flex items-center justify-center gap-1.5 pt-1">
             {item.no_telepon && (
               <a
                 href={`https://wa.me/${item.no_telepon.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="WhatsApp"
-                className="text-emerald-700 dark:text-emerald-400 hover:scale-110 transition-transform"
+                title="Hubungi WhatsApp"
+                className="w-5 h-5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-colors"
               >
                 <Phone className="w-2.5 h-2.5" />
               </a>
@@ -425,8 +420,8 @@ function PosterCard({
             {item.email && (
               <a
                 href={`mailto:${item.email}`}
-                title="Email"
-                className="text-red-700 dark:text-red-400 hover:scale-110 transition-transform"
+                title="Kirim Email"
+                className="w-5 h-5 rounded-full bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-colors"
               >
                 <Mail className="w-2.5 h-2.5" />
               </a>
@@ -434,6 +429,6 @@ function PosterCard({
           </div>
         )}
       </div>
-    </div>
+    </Card>
   )
 }
