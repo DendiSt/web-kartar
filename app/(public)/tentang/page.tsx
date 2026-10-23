@@ -1,4 +1,6 @@
 
+import Image from 'next/image'
+
 export const metadata = {
   title: 'Tentang Kami | Tirtajaya 01'
 }
@@ -14,12 +16,15 @@ export default function TentangPage() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-        <div className="aspect-square relative rounded-2xl overflow-hidden bg-muted">
-          {/* Replace this placeholder with a real group photo from your storage later */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-secondary/20" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-muted-foreground font-medium">Foto Karang Taruna</span>
-          </div>
+        <div className="aspect-4/3 sm:aspect-square relative rounded-2xl overflow-hidden bg-muted shadow-md border border-border/80 group">
+          <Image
+            src="/images/fotokartar.jpeg"
+            alt="Foto Bersama Pemuda Karang Taruna Tirtajaya 01"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, 450px"
+            priority
+          />
         </div>
         <div className="space-y-4 md:space-y-6">
           <h2 className="text-2xl sm:text-3xl font-bold font-heading">Sejarah Kami</h2>
