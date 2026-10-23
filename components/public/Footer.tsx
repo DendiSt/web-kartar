@@ -30,17 +30,17 @@ export default function Footer() {
             <h3 className="font-heading font-bold mb-4 text-[#101214] dark:text-white text-base">Kontak & Lokasi</h3>
             <ul className="space-y-2.5 text-sm text-[#42526e] dark:text-[#b7b9be]">
               <li className="flex gap-2">
-                <span className="text-[#1868db]">📍</span> 
-                <span>Dusun Tirtajaya 01, RT 01/01, Desa Sumurgintung</span>
+                <span className="text-[#1868db]">📍</span>
+                <span>Sumurgintung, RT 07/RW 02, Desa Sumurgintung</span>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#1868db]">📱</span> 
+                <span className="text-[#1868db]">📱</span>
                 <a href="https://wa.me/6281223772603" target="_blank" rel="noopener noreferrer" className="hover:text-[#1868db]">
                   0812-2377-2603 (Ketua)
                 </a>
               </li>
               <li className="flex gap-2">
-                <span className="text-[#1868db]">📱</span> 
+                <span className="text-[#1868db]">📱</span>
                 <a href="https://wa.me/6285295619819" target="_blank" rel="noopener noreferrer" className="hover:text-[#1868db]">
                   0852-9561-9819 (Sekretaris)
                 </a>
