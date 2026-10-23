@@ -7,16 +7,11 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { 
   Users, 
-  Crown, 
-  ShieldCheck, 
-  Award, 
-  Briefcase, 
   Network, 
   LayoutGrid, 
   Search, 
   Phone, 
-  Mail,
-  Layers
+  Mail
 } from 'lucide-react'
 
 export interface StrukturMember {
@@ -134,14 +129,10 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
 
       {/* 1. BAGAN STRUKTUR (ORGANOGRAM TREE VIEW) */}
       {viewMode === 'tree' ? (
-        <div className="space-y-2 sm:space-y-3 py-2">
+        <div className="space-y-1 sm:space-y-2 py-2">
           {/* TIER 1: PEMBINA & PELINDUNG */}
           {pembinas.length > 0 && (
             <div className="flex flex-col items-center">
-              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 mb-2">
-                <ShieldCheck className="w-3 h-3" />
-                Dewan Pembina / Penasihat
-              </div>
               <div className="flex flex-wrap justify-center items-center gap-3">
                 {pembinas.map((item) => (
                   <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
@@ -152,7 +143,7 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
 
               {/* Connecting line to Ketua */}
               {ketuas.length > 0 && (
-                <div className="flex flex-col items-center my-1">
+                <div className="flex flex-col items-center my-1 sm:my-1.5">
                   <div className="w-0.5 h-4 sm:h-6 bg-gradient-to-b from-amber-500/50 to-primary/50" />
                   <div className="w-1.5 h-1.5 rounded-full bg-primary/60 -mt-0.5" />
                 </div>
@@ -163,10 +154,6 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
           {/* TIER 2: KETUA */}
           {ketuas.length > 0 && (
             <div className="flex flex-col items-center">
-              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-primary bg-primary/10 border border-primary/20 mb-2">
-                <Crown className="w-3 h-3" />
-                Ketua Karang Taruna
-              </div>
               <div className="flex flex-wrap justify-center items-center gap-3">
                 {ketuas.map((item) => (
                   <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
@@ -191,11 +178,6 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
           {/* TIER 3: WAKIL KETUA (2 CARD KIRI KANAN: WAKIL 1 & WAKIL 2) */}
           {wakils.length > 0 && (
             <div className="flex flex-col items-center">
-              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300 bg-sky-500/10 border border-sky-500/20 mb-2">
-                <Award className="w-3 h-3" />
-                Wakil Ketua
-              </div>
-
               {/* Exactly 2 Cards side-by-side: Wakil 1 & Wakil 2 */}
               <div className="flex justify-center items-center gap-3.5 xs:gap-4 sm:gap-6">
                 {wakils.map((item) => (
@@ -228,11 +210,6 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
           {/* TIER 4: PENGURUS HARIAN (2 CARD KIRI KANAN: SEKRETARIS & BENDAHARA) */}
           {bph.length > 0 && (
             <div className="flex flex-col items-center">
-              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 mb-2">
-                <Briefcase className="w-3 h-3" />
-                Sekretariat & Kebendaharaan
-              </div>
-
               {/* Exactly 2 Cards side-by-side: Sekretaris & Bendahara */}
               <div className="flex justify-center items-center gap-3.5 xs:gap-4 sm:gap-6">
                 {bph.map((item) => (
@@ -255,10 +232,6 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
           {/* TIER 5: SEKSI & KOORDINATOR BIDANG KERJA */}
           {lainnya.length > 0 && (
             <div className="flex flex-col items-center pt-2">
-              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-500/10 border border-purple-500/20 mb-2">
-                <Layers className="w-3 h-3" />
-                Seksi & Koordinator Bidang
-              </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4 max-w-4xl mx-auto w-full">
                 {lainnya.map((item) => (
                   <CompactCard key={item.id} item={item} tier="lainnya" />
