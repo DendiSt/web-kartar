@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Calendar, Eye, ArrowRight, Search, Pin, Newspaper, Sparkles, User } from 'lucide-react'
+import { Calendar, Eye, ArrowRight, Search, Pin, Newspaper, Sparkles, User, Filter, ChevronDown } from 'lucide-react'
 import { format } from 'date-fns'
 import { id as localeID } from 'date-fns/locale/id'
 
@@ -71,9 +71,28 @@ export default function BeritaListClient({ initialData }: { initialData: BeritaI
   return (
     <div className="space-y-10">
       {/* Search & Filter Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-[#181b20] p-4 md:p-6 rounded-[20px] border border-[#f0f1f2] dark:border-[#292a2e] shadow-sm">
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-none">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-center justify-between bg-white dark:bg-[#181b20] p-4 md:p-6 rounded-[20px] border border-[#f0f1f2] dark:border-[#292a2e] shadow-sm">
+        {/* Mobile: Category Dropdown */}
+        <div className="w-full md:hidden">
+          <div className="relative flex items-center bg-muted/40 dark:bg-muted/20 rounded-xl border border-border/80 focus-within:border-primary/50 transition-colors">
+            <Filter className="w-4 h-4 ml-3 text-muted-foreground shrink-0 pointer-events-none" />
+            <select
+              value={activeCategory}
+              onChange={(e) => setActiveCategory(e.target.value)}
+              className="w-full bg-transparent text-xs font-semibold py-2.5 pl-2.5 pr-8 text-foreground appearance-none cursor-pointer focus:outline-none"
+            >
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id} className="bg-background text-foreground py-1">
+                  {cat.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="w-4 h-4 mr-3 text-muted-foreground shrink-0 pointer-events-none absolute right-0" />
+          </div>
+        </div>
+
+        {/* Desktop: Category Pills */}
+        <div className="hidden md:flex items-center gap-2 overflow-x-auto w-auto pb-0 scrollbar-none">
           {categories.map((cat) => (
             <Button
               key={cat.id}

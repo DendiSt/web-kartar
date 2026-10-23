@@ -13,7 +13,7 @@ export default async function AgendaPublicPage() {
   const data = await getAgenda()
 
   return (
-    <div className="container py-10 md:py-16 max-w-6xl mx-auto space-y-8">
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-10 md:py-16 max-w-6xl space-y-8">
       {/* Title Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">

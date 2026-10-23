@@ -16,10 +16,10 @@ export default async function StrukturPublicPage() {
   const activeMembers = data.filter(item => item.is_active)
 
   return (
-    <div className="container py-12 md:py-24 max-w-6xl mx-auto space-y-12">
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-10 md:py-20 max-w-6xl space-y-10 md:space-y-12">
       <div className="text-center max-w-2xl mx-auto space-y-4">
-        <h1 className="text-4xl font-heading font-bold tracking-tight sm:text-5xl">Struktur Pengurus</h1>
-        <p className="text-xl text-muted-foreground">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight">Struktur Pengurus</h1>
+        <p className="text-base sm:text-xl text-muted-foreground">
           Mengenal lebih dekat para penggerak Karang Taruna Tirtajaya 01.
         </p>
       </div>

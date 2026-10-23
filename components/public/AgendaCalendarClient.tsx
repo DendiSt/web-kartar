@@ -232,12 +232,12 @@ export default function AgendaCalendarClient({ initialData }: AgendaCalendarClie
           {/* Left/Main: Calendar Month Grid (8 Cols) */}
           <div className="lg:col-span-8 bg-card rounded-2xl border border-border p-4 sm:p-6 shadow-xs">
             {/* Month Header Nav */}
-            <div className="flex items-center justify-between pb-4 border-b border-border/70">
+            <div className="flex flex-wrap items-center justify-between pb-4 border-b border-border/70 gap-2">
               <div className="flex items-center gap-2">
                 <h2 className="text-xl sm:text-2xl font-bold font-heading text-foreground capitalize">
                   {format(currentMonth, 'MMMM yyyy', { locale: localeID })}
                 </h2>
-                <Badge variant="outline" className="text-xs px-2 py-0 font-normal text-muted-foreground">
+                <Badge variant="outline" className="text-xs px-2 py-0 font-normal text-muted-foreground whitespace-nowrap">
                   {filteredData.length} Kegiatan
                 </Badge>
               </div>

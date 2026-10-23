@@ -127,22 +127,30 @@ export default function AspirasiClient({ initialAspirasi }: AspirasiClientProps)
           </p>
 
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <div className="p-4 rounded-xl border bg-card/60 backdrop-blur-sm">
-              <span className="text-xs text-muted-foreground block">Pesan Dipublikasikan</span>
-              <span className="text-2xl font-bold text-foreground mt-1 block">
-                {items.length} Masukan
-              </span>
-              <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
+            <div className="p-3.5 sm:p-4 rounded-xl border bg-card/60 backdrop-blur-sm flex flex-col justify-between">
+              <span className="text-[11px] sm:text-xs text-muted-foreground block truncate">Pesan Dipublikasikan</span>
+              <div className="flex items-baseline gap-1.5 my-1">
+                <span className="text-2xl sm:text-3xl font-extrabold text-foreground font-heading">
+                  {items.length}
+                </span>
+                <span className="text-xs font-semibold text-muted-foreground">Masukan</span>
+              </div>
+              <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium block truncate">
                 Telah lolos moderasi
               </span>
             </div>
 
-            <div className="p-4 rounded-xl border bg-card/60 backdrop-blur-sm">
-              <span className="text-xs text-muted-foreground block">Tanggapan Resmi</span>
-              <span className="text-2xl font-bold text-primary mt-1 block">
-                {items.filter((i) => i.tanggapan).length} Ditanggapi
+            <div className="p-3.5 sm:p-4 rounded-xl border bg-card/60 backdrop-blur-sm flex flex-col justify-between">
+              <span className="text-[11px] sm:text-xs text-muted-foreground block truncate">Tanggapan Resmi</span>
+              <div className="flex items-baseline gap-1.5 my-1">
+                <span className="text-2xl sm:text-3xl font-extrabold text-primary font-heading">
+                  {items.filter((i) => i.tanggapan).length}
+                </span>
+                <span className="text-xs font-semibold text-primary">Ditanggapi</span>
+              </div>
+              <span className="text-[11px] text-muted-foreground block truncate">
+                Oleh Pengurus Harian
               </span>
-              <span className="text-[11px] text-muted-foreground">Oleh Pengurus Harian</span>
             </div>
           </div>
 
@@ -357,17 +365,17 @@ export default function AspirasiClient({ initialAspirasi }: AspirasiClientProps)
               return (
                 <div
                   key={item.id}
-                  className="rounded-xl border bg-card p-5 shadow-sm space-y-4 hover:border-primary/40 transition-colors flex flex-col justify-between"
+                  className="rounded-xl border bg-card p-5 shadow-sm space-y-4 hover:border-primary/40 transition-colors flex flex-col justify-between overflow-hidden"
                 >
                   <div className="space-y-3">
                     {/* Header Card */}
                     <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <div className="h-8 w-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center shrink-0">
                           {item.is_anonim ? <User className="h-4 w-4" /> : item.nama.charAt(0).toUpperCase()}
                         </div>
-                        <div>
-                          <p className="text-xs font-semibold text-foreground">
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-foreground truncate">
                             {item.is_anonim ? 'Warga Dusun (Anonim)' : item.nama}
                           </p>
                           <p className="text-[11px] text-muted-foreground flex items-center gap-1">
@@ -377,14 +385,14 @@ export default function AspirasiClient({ initialAspirasi }: AspirasiClientProps)
                         </div>
                       </div>
 
-                      <Badge variant="outline" className={`text-[11px] font-medium ${catMeta.color}`}>
+                      <Badge variant="outline" className={`text-[11px] font-medium shrink-0 ${catMeta.color}`}>
                         <CatIcon className="h-3 w-3 mr-1" />
                         {catMeta.label}
                       </Badge>
                     </div>
 
                     {/* Message Body */}
-                    <p className="text-xs text-foreground/90 leading-relaxed italic bg-muted/30 p-3 rounded-lg border-l-2 border-primary/50">
+                    <p className="text-xs text-foreground/90 leading-relaxed italic bg-muted/30 p-3 rounded-lg border-l-2 border-primary/50 break-words [overflow-wrap:anywhere]">
                       &ldquo;{item.pesan}&rdquo;
                     </p>
                   </div>
@@ -393,10 +401,10 @@ export default function AspirasiClient({ initialAspirasi }: AspirasiClientProps)
                   {item.tanggapan ? (
                     <div className="pt-3 border-t space-y-1.5 bg-primary/5 -mx-5 -mb-5 p-4 rounded-b-xl border-t border-primary/10">
                       <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
-                        <Building2 className="h-3.5 w-3.5" />
-                        Tanggapan Resmi Karang Taruna
+                        <Building2 className="h-3.5 w-3.5 shrink-0" />
+                        <span>Tanggapan Resmi Karang Taruna</span>
                       </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">
+                      <p className="text-xs text-muted-foreground leading-relaxed break-words [overflow-wrap:anywhere]">
                         {item.tanggapan}
                       </p>
                     </div>

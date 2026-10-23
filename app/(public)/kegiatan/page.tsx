@@ -16,22 +16,22 @@ export default async function KegiatanPublicPage() {
   const data = await getKegiatan()
 
   return (
-    <div className="container py-12 md:py-24 max-w-6xl mx-auto space-y-12">
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-10 md:py-20 max-w-6xl space-y-10 md:space-y-12">
       <div className="text-center max-w-2xl mx-auto space-y-4">
-        <h1 className="text-4xl font-heading font-bold tracking-tight sm:text-5xl">Kegiatan Kami</h1>
-        <p className="text-xl text-muted-foreground">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight">Kegiatan Kami</h1>
+        <p className="text-base sm:text-xl text-muted-foreground">
           Jejak langkah dan program kerja Karang Taruna Tirtajaya 01 dalam membangun pemuda dan masyarakat.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {data.length === 0 ? (
           <div className="col-span-full text-center py-12 text-muted-foreground">
             Belum ada data kegiatan.
           </div>
         ) : (
           data.map((item) => (
-            <Card key={item.id} className="overflow-hidden group hover:shadow-lg transition-shadow border-muted flex flex-col">
+            <Card key={item.id} className="overflow-hidden group hover:shadow-lg transition-shadow border-muted flex flex-col rounded-2xl">
               <div className="aspect-video relative bg-muted overflow-hidden">
                 {item.foto_cover ? (
                   <Image 
@@ -61,7 +61,7 @@ export default async function KegiatanPublicPage() {
                   </div>
                 )}
               </div>
-              <CardContent className="p-6 flex-1 space-y-4">
+              <CardContent className="p-5 sm:p-6 flex-1 space-y-4">
                 <h3 className="font-heading text-xl font-bold line-clamp-2 group-hover:text-primary transition-colors">
                   <Link href={`/kegiatan/${item.slug}`}>
                     {item.judul}
@@ -81,7 +81,7 @@ export default async function KegiatanPublicPage() {
                   {item.deskripsi}
                 </p>
               </CardContent>
-              <CardFooter className="p-6 pt-0">
+              <CardFooter className="p-5 sm:p-6 pt-0">
                 <Link 
                   href={`/kegiatan/${item.slug}`} 
                   className="inline-flex items-center text-sm font-medium text-primary hover:underline"

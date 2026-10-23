@@ -13,7 +13,7 @@ export default async function DokumenPage() {
   const data = await getDokumenList({ isPublicOnly: true })
 
   return (
-    <div className="container py-12 md:py-20 max-w-6xl mx-auto px-4 md:px-6 space-y-12">
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-10 md:py-20 max-w-6xl space-y-10 md:space-y-12">
       {/* Header Section */}
       <div className="text-center max-w-2xl mx-auto space-y-4">
         <span className="text-xs uppercase tracking-wider font-bold text-[#1868db] bg-[#1868db]/10 px-3.5 py-1 rounded-full inline-block">

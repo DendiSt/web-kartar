@@ -24,29 +24,29 @@ export default async function KeuanganPublicPage() {
   }
 
   return (
-    <div className="container py-12 md:py-24 max-w-5xl mx-auto space-y-12">
+    <div className="container mx-auto px-4 sm:px-6 md:px-8 py-10 md:py-20 max-w-5xl space-y-10 md:space-y-12">
       <div className="text-center max-w-2xl mx-auto space-y-4">
-        <h1 className="text-4xl font-heading font-bold tracking-tight sm:text-5xl">Transparansi Dana</h1>
-        <p className="text-xl text-muted-foreground">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold tracking-tight">Transparansi Dana</h1>
+        <p className="text-base sm:text-xl text-muted-foreground">
           Laporan kas masuk dan keluar sebagai bentuk pertanggungjawaban Karang Taruna kepada masyarakat.
         </p>
       </div>
 
-      <div className="flex justify-center">
-        <Card className="w-full max-w-md bg-primary text-primary-foreground border-none shadow-lg">
-          <CardContent className="p-8 text-center space-y-2">
+      <div className="flex justify-center px-2">
+        <Card className="w-full max-w-md bg-primary text-primary-foreground border-none shadow-lg rounded-2xl">
+          <CardContent className="p-6 sm:p-8 text-center space-y-2">
             <div className="mx-auto w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-4">
               <Wallet className="h-6 w-6 text-white" />
             </div>
             <p className="text-sm font-medium opacity-90">Total Saldo Kas Saat Ini</p>
-            <p className="text-4xl font-bold font-heading">{formatRupiah(saldoKas)}</p>
+            <p className="text-2xl sm:text-4xl font-bold font-heading">{formatRupiah(saldoKas)}</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-        <div className="p-6 border-b bg-muted/30">
-          <h2 className="text-lg font-bold font-heading">Riwayat Transaksi</h2>
+      <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
+        <div className="p-4 sm:p-6 border-b bg-muted/30">
+          <h2 className="text-base sm:text-lg font-bold font-heading">Riwayat Transaksi</h2>
         </div>
         <div className="overflow-x-auto">
           <Table>
