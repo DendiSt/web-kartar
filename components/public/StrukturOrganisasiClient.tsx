@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { 
@@ -45,7 +45,8 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
   // Categorize members
   const pembinas: StrukturMember[] = []
   const ketuas: StrukturMember[] = []
-  const pengurusHarian: StrukturMember[] = [] // Wakil 1, Wakil 2, Sekretaris, Bendahara (4 cards in one row)
+  const wakils: StrukturMember[] = []
+  const bph: StrukturMember[] = [] // Sekretaris & Bendahara
   const lainnya: StrukturMember[] = []
 
   initialMembers.forEach((m) => {
@@ -54,8 +55,10 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
       pembinas.push(m)
     } else if (j === 'ketua' || (j.includes('ketua') && !j.includes('wakil') && !j.includes('seksi') && !j.includes('bidang'))) {
       ketuas.push(m)
-    } else if (j.includes('wakil') || j.includes('sekretaris') || j.includes('bendahara')) {
-      pengurusHarian.push(m)
+    } else if (j.includes('wakil')) {
+      wakils.push(m)
+    } else if (j.includes('sekretaris') || j.includes('bendahara')) {
+      bph.push(m)
     } else {
       lainnya.push(m)
     }
@@ -64,7 +67,8 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
   const sortByUrutan = (a: StrukturMember, b: StrukturMember) => (a.urutan ?? 99) - (b.urutan ?? 99)
   pembinas.sort(sortByUrutan)
   ketuas.sort(sortByUrutan)
-  pengurusHarian.sort(sortByUrutan)
+  wakils.sort(sortByUrutan)
+  bph.sort(sortByUrutan)
   lainnya.sort(sortByUrutan)
 
   // Filtered members for Grid view
@@ -89,7 +93,7 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      {/* View Switcher & Toolbar (Compact & Clean on Mobile) */}
+      {/* View Switcher & Toolbar (Compact & Sleek) */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-4 bg-card/60 backdrop-blur-sm p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-border">
         {/* Compact Toggle Buttons */}
         <div className="flex items-center bg-muted/60 p-0.5 sm:p-1 rounded-lg border border-border/80 w-full sm:w-auto">
@@ -128,9 +132,9 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
         </div>
       </div>
 
-      {/* 1. BAGAN STRUKTUR (ORGANOGRAM COMPACT VIEW: 4 CARDS PER ROW) */}
+      {/* 1. BAGAN STRUKTUR (ORGANOGRAM TREE VIEW) */}
       {viewMode === 'tree' ? (
-        <div className="space-y-2 sm:space-y-4 py-2">
+        <div className="space-y-2 sm:space-y-3 py-2">
           {/* TIER 1: PEMBINA & PELINDUNG */}
           {pembinas.length > 0 && (
             <div className="flex flex-col items-center">
@@ -140,7 +144,7 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
               </div>
               <div className="flex flex-wrap justify-center items-center gap-3">
                 {pembinas.map((item) => (
-                  <div key={item.id} className="w-[105px] xs:w-[115px] sm:w-[160px] md:w-[190px]">
+                  <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
                     <CompactCard item={item} tier="pembina" />
                   </div>
                 ))}
@@ -165,41 +169,76 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
               </div>
               <div className="flex flex-wrap justify-center items-center gap-3">
                 {ketuas.map((item) => (
-                  <div key={item.id} className="w-[105px] xs:w-[115px] sm:w-[160px] md:w-[190px]">
+                  <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
                     <CompactCard item={item} tier="ketua" />
                   </div>
                 ))}
               </div>
 
-              {/* Connecting branch to 4 Pengurus Harian */}
-              {pengurusHarian.length > 0 && (
-                <div className="flex flex-col items-center w-full my-1.5">
-                  <div className="w-0.5 h-3 sm:h-5 bg-border" />
-                  {/* Branch spanning across the 4 cards */}
-                  <div className="w-[75%] sm:w-[75%] max-w-2xl h-0.5 bg-border relative">
-                    <div className="absolute left-0 top-0 w-0.5 h-3 sm:h-5 bg-border" />
-                    <div className="absolute left-[33%] top-0 w-0.5 h-3 sm:h-5 bg-border" />
-                    <div className="absolute left-[66%] top-0 w-0.5 h-3 sm:h-5 bg-border" />
-                    <div className="absolute right-0 top-0 w-0.5 h-3 sm:h-5 bg-border" />
+              {/* Connecting branch to Wakils (2 cards) */}
+              {wakils.length > 0 && (
+                <div className="flex flex-col items-center w-full my-1 sm:my-1.5">
+                  <div className="w-0.5 h-3.5 sm:h-5 bg-border" />
+                  <div className="w-[145px] xs:w-[160px] sm:w-[185px] md:w-[210px] h-0.5 bg-border relative">
+                    <div className="absolute left-0 top-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                    <div className="absolute right-0 top-0 w-0.5 h-3.5 sm:h-5 bg-border" />
                   </div>
-                  <div className="w-0.5 h-3 sm:h-5 bg-border -mt-0.5" />
                 </div>
               )}
             </div>
           )}
 
-          {/* TIER 3: PENGURUS HARIAN (1 BARIS MUAT 4 CARD: WAKIL 1, WAKIL 2, SEKRETARIS, BENDAHARA) */}
-          {pengurusHarian.length > 0 && (
+          {/* TIER 3: WAKIL KETUA (2 CARD KIRI KANAN: WAKIL 1 & WAKIL 2) */}
+          {wakils.length > 0 && (
             <div className="flex flex-col items-center">
               <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300 bg-sky-500/10 border border-sky-500/20 mb-2">
-                <Briefcase className="w-3 h-3" />
-                Pengurus Inti & Harian
+                <Award className="w-3 h-3" />
+                Wakil Ketua
               </div>
 
-              {/* 4 Cards in 1 Row */}
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-3 md:gap-4 max-w-4xl mx-auto w-full">
-                {pengurusHarian.map((item) => (
-                  <CompactCard key={item.id} item={item} tier="harian" />
+              {/* Exactly 2 Cards side-by-side: Wakil 1 & Wakil 2 */}
+              <div className="flex justify-center items-center gap-3.5 xs:gap-4 sm:gap-6">
+                {wakils.map((item) => (
+                  <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
+                    <CompactCard item={item} tier="wakil" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Connecting branch from Wakils down to BPH (Sekretaris & Bendahara) */}
+              {bph.length > 0 && (
+                <div className="flex flex-col items-center w-full my-1 sm:my-1.5">
+                  {/* Upper collector bar */}
+                  <div className="w-[145px] xs:w-[160px] sm:w-[185px] md:w-[210px] h-0.5 bg-border relative">
+                    <div className="absolute left-0 bottom-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                    <div className="absolute right-0 bottom-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                  </div>
+                  {/* Central vertical stem */}
+                  <div className="w-0.5 h-3.5 sm:h-5 bg-border" />
+                  {/* Lower distributor bar */}
+                  <div className="w-[145px] xs:w-[160px] sm:w-[185px] md:w-[210px] h-0.5 bg-border relative">
+                    <div className="absolute left-0 top-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                    <div className="absolute right-0 top-0 w-0.5 h-3.5 sm:h-5 bg-border" />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TIER 4: PENGURUS HARIAN (2 CARD KIRI KANAN: SEKRETARIS & BENDAHARA) */}
+          {bph.length > 0 && (
+            <div className="flex flex-col items-center">
+              <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 mb-2">
+                <Briefcase className="w-3 h-3" />
+                Sekretariat & Kebendaharaan
+              </div>
+
+              {/* Exactly 2 Cards side-by-side: Sekretaris & Bendahara */}
+              <div className="flex justify-center items-center gap-3.5 xs:gap-4 sm:gap-6">
+                {bph.map((item) => (
+                  <div key={item.id} className="w-[125px] xs:w-[135px] sm:w-[160px] md:w-[180px]">
+                    <CompactCard item={item} tier="bph" />
+                  </div>
                 ))}
               </div>
 
@@ -213,14 +252,14 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
             </div>
           )}
 
-          {/* TIER 4: SEKSI & KOORDINATOR BIDANG KERJA */}
+          {/* TIER 5: SEKSI & KOORDINATOR BIDANG KERJA */}
           {lainnya.length > 0 && (
             <div className="flex flex-col items-center pt-2">
               <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[11px] font-bold uppercase tracking-wider text-purple-700 dark:text-purple-300 bg-purple-500/10 border border-purple-500/20 mb-2">
                 <Layers className="w-3 h-3" />
                 Seksi & Koordinator Bidang
               </div>
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-3 md:gap-4 max-w-4xl mx-auto w-full">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4 max-w-4xl mx-auto w-full">
                 {lainnya.map((item) => (
                   <CompactCard key={item.id} item={item} tier="lainnya" />
                 ))}
@@ -268,7 +307,7 @@ export default function StrukturOrganisasiClient({ initialMembers }: Props) {
               <p className="text-[11px] text-muted-foreground">Coba ubah kata kunci pencarian Anda.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4">
               {filteredGridMembers.map((item) => (
                 <CompactCard key={item.id} item={item} tier="grid" />
               ))}
@@ -285,7 +324,7 @@ function CompactCard({
   tier
 }: {
   item: StrukturMember
-  tier: 'pembina' | 'ketua' | 'harian' | 'lainnya' | 'grid'
+  tier: 'pembina' | 'ketua' | 'wakil' | 'bph' | 'lainnya' | 'grid'
 }) {
   // Initials for avatar fallback
   const initials = item.nama_lengkap
@@ -322,21 +361,21 @@ function CompactCard({
     : 'border-border/80'
 
   return (
-    <Card className={`w-full bg-card rounded-xl sm:rounded-2xl border ${borderAccent} p-1.5 sm:p-3 flex flex-col items-center justify-between text-center shadow-2xs hover:shadow-md transition-all duration-300 relative group overflow-hidden`}>
+    <Card className={`w-full bg-card rounded-xl sm:rounded-2xl border ${borderAccent} p-2 sm:p-3 flex flex-col items-center justify-between text-center shadow-2xs hover:shadow-md transition-all duration-300 relative group overflow-hidden`}>
       {/* Avatar Container */}
       <div className="relative mt-0.5 sm:mt-1">
         {item.foto_url ? (
-          <div className="relative w-9 h-9 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full overflow-hidden border border-border shadow-inner">
+          <div className="relative w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full overflow-hidden border border-border shadow-inner">
             <Image
               src={item.foto_url}
               alt={item.nama_lengkap}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 640px) 40px, 64px"
+              sizes="(max-width: 640px) 45px, 64px"
             />
           </div>
         ) : (
-          <div className={`w-9 h-9 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center font-heading font-extrabold text-xs sm:text-base md:text-lg border shadow-inner transition-transform duration-300 group-hover:scale-105 ${badgeClass}`}>
+          <div className={`w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center font-heading font-extrabold text-xs sm:text-base md:text-lg border shadow-inner transition-transform duration-300 group-hover:scale-105 ${badgeClass}`}>
             {initials}
           </div>
         )}
@@ -344,18 +383,18 @@ function CompactCard({
 
       {/* Role / Jabatan Pill */}
       <div className="mt-1 sm:mt-1.5 w-full px-0.5">
-        <span className={`inline-block w-full max-w-full text-[8px] sm:text-[10px] md:text-xs font-bold px-1 sm:px-2 py-0.5 rounded-full border truncate leading-none ${badgeClass}`}>
+        <span className={`inline-block w-full max-w-full text-[8px] sm:text-[10px] md:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full border truncate leading-none ${badgeClass}`}>
           {item.jabatan}
         </span>
       </div>
 
       {/* Name & Divisi */}
       <div className="my-1 sm:my-1.5 w-full px-0.5">
-        <h3 className="font-heading font-bold text-[10px] sm:text-xs md:text-sm text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+        <h3 className="font-heading font-bold text-[11px] sm:text-xs md:text-sm text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">
           {item.nama_lengkap}
         </h3>
         {item.divisi && (
-          <p className="text-[7px] sm:text-[9px] md:text-[10px] text-muted-foreground truncate leading-tight mt-0.5">
+          <p className="text-[8px] sm:text-[9px] md:text-[10px] text-muted-foreground truncate leading-tight mt-0.5">
             Div. {item.divisi}
           </p>
         )}
