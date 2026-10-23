@@ -8,14 +8,14 @@ import { ArrowRight, Sparkles, Users, Calendar } from 'lucide-react'
 export default function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-[#f4f5f7] dark:bg-[#101214] text-foreground transition-colors duration-300 py-20 md:py-28 border-b border-[#e5e7eb] dark:border-[#292a2e]/60">
-      {/* Signature Atlassian Geometric Confetti Borders & Angles */}
-      <div className="absolute top-0 left-0 w-32 h-32 md:w-56 md:h-56 pointer-events-none select-none overflow-hidden opacity-85 dark:opacity-90">
+      {/* Signature Atlassian Geometric Confetti Borders & Angles (Hidden on mobile to prevent overlap with text/badges) */}
+      <div className="hidden sm:block absolute top-0 left-0 w-32 h-32 md:w-56 md:h-56 pointer-events-none select-none overflow-hidden opacity-85 dark:opacity-90">
         <div className="absolute -top-12 -left-12 w-32 h-16 bg-[#bf63f3] -rotate-12 transform origin-top-left rounded-sm" />
         <div className="absolute top-16 -left-6 w-24 h-10 bg-[#fca700] rotate-45 transform rounded-sm" />
         <div className="absolute top-28 left-12 w-14 h-6 bg-[#1868db] -rotate-12 transform rounded-sm" />
       </div>
 
-      <div className="absolute bottom-0 right-0 w-40 h-40 md:w-72 md:h-72 pointer-events-none select-none overflow-hidden opacity-85 dark:opacity-90">
+      <div className="hidden sm:block absolute bottom-0 right-0 w-40 h-40 md:w-72 md:h-72 pointer-events-none select-none overflow-hidden opacity-85 dark:opacity-90">
         <div className="absolute -bottom-10 -right-10 w-44 h-20 bg-[#1868db] rotate-12 transform origin-bottom-right rounded-sm" />
         <div className="absolute bottom-20 -right-6 w-32 h-10 bg-[#36b37e] -rotate-45 transform rounded-sm" />
         <div className="absolute bottom-32 right-16 w-16 h-8 bg-[#fca700] rotate-12 transform rounded-sm" />
@@ -31,9 +31,9 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-7 text-left space-y-6"
           >
-            {/* Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#fca700]/15 dark:bg-white/10 text-[#a35200] dark:text-[#fca700] border border-[#fca700]/30 dark:border-white/15 text-xs font-semibold tracking-wide transition-colors">
-              <Sparkles className="w-3.5 h-3.5" />
+            {/* Pill Badge with solid/opaque backing & clear contrast */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-[#181b20]/95 text-amber-700 dark:text-amber-300 border border-amber-500/30 dark:border-amber-400/30 text-xs font-semibold tracking-wide shadow-xs backdrop-blur-md transition-colors">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
               <span>PEMUDA KREATIF, DESA BERDAYA</span>
             </div>
 
