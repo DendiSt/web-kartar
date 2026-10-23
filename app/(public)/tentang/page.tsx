@@ -1,8 +1,9 @@
 
-import Image from 'next/image'
+import TentangPhotoViewer from '@/components/public/TentangPhotoViewer'
 
 export const metadata = {
-  title: 'Tentang Kami | Tirtajaya 01'
+  title: 'Tentang Kami | Karang Taruna Tirtajaya 01',
+  description: 'Profil dan sejarah Karang Taruna Tirtajaya 01 Dusun Sumurgintung.'
 }
 
 export default function TentangPage() {
@@ -16,16 +17,10 @@ export default function TentangPage() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-        <div className="aspect-4/3 sm:aspect-square relative rounded-2xl overflow-hidden bg-muted shadow-md border border-border/80 group">
-          <Image
-            src="/images/fotokartar.jpeg"
-            alt="Foto Bersama Pemuda Karang Taruna Tirtajaya 01"
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 768px) 100vw, 450px"
-            priority
-          />
-        </div>
+        <TentangPhotoViewer
+          src="/images/fotokartar.jpeg"
+          alt="Foto Bersama Pemuda Karang Taruna Tirtajaya 01"
+        />
         <div className="space-y-4 md:space-y-6">
           <h2 className="text-2xl sm:text-3xl font-bold font-heading">Sejarah Kami</h2>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
